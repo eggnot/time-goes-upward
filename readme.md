@@ -4,8 +4,6 @@ Calendar notes, year at a glance. A stack of months where days are aligned by we
 
 ![alt text](https://eggnot.github.io/time-goes-upward/images/main-horizontal.png)
 
-<br /><br />
-
 <details>
 <summary>Why days go upward?</summary>
 
