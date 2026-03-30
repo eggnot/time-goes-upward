@@ -2,6 +2,8 @@
 
 Calendar notes, year at a glance. A stack of months where days are aligned by weeks.
 
+webapp: https://eggnot.github.io/time-goes-upward/
+
 [![tgu](https://eggnot.com/time-goes-upward/images/main-horizontal.png)](https://eggnot.github.io/time-goes-upward/)
 
 
