@@ -4,16 +4,16 @@
     --bg-content: #d0ff8a;
     --text-on-content: #000;
     --bg-tooltip: #dfffdf;
-    --primary: #ff4c55;
-    --accent: #2196f3;
+    --primary: #ffaaaa;
+    --accent: #ce0000;
     --sunday: #d32f2f;
     --text: #333;
     --text-light: #767;
     --border: var(--text);
     --font-main: system-ui, -apple-system, sans-serif;
-    --font-size: 16pt;
+    --font-size: 20pt;
     --modal-opacity: 1;
-    --header-h: clamp(2.8rem, 5vw, 3.2rem);
+    --header-h: clamp(2rem, 3vw, 3.5rem);
     --ui-height: calc(var(--header-h) * 0.7);
     --ui-font-size: calc(var(--header-h) * 0.4);
     --ui-radius: 0.4rem;
@@ -32,7 +32,7 @@ body::before {
     content: "";
     position: fixed;
     top: 48px; left: -48px; width: calc(100% + 48px); height: calc(100% + 48px);
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 16 16'><path d='M14 2H5.50003L4.00003 3.5L6.83581 6.33579L0.585815 12.5858L3.41424 15.4142L9.66424 9.16421L12.5 12L14 10.5L14 2Z' /></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 16 16'><rect width='100%' height='100%' fill='rgb(16,16,16)'/><path d='M14 2H5.50003L4.00003 3.5L6.83581 6.33579L0.585815 12.5858L3.41424 15.4142L9.66424 9.16421L12.5 12L14 10.5L14 2Z' /></svg>");
     z-index: -1;
     pointer-events: none;
     will-change: transform; 
@@ -106,28 +106,74 @@ button:focus-visible { outline: 2px solid var(--accent); }
 }
 
 
-#app { display: grid; flex: 1; gap: 1px; width: 100%; height: 100%; }
-
-.gh, .gc { display: flex; align-items: center; justify-content: center; position: relative; }
-
-.gh { color: #eee; font-weight: bold; text-transform: uppercase;
-    font-size: clamp(0.4rem, 1.2vmin, 0.8rem);
+#app { 
+    display: grid; flex: 1; gap: 1px; width: 100%; height: 100%; 
+    container-type: inline-size;
+    container-name: grid-container;
 }
-.s { color: var(--sunday); }
 
-.gc { background: var(--bg-card); font-size: clamp(0.45rem, 2.2vmin, 1rem); user-select: none; container-type: size; cursor: pointer; }
+.gh, .gc, .gm { 
+    display: flex; align-items: center; justify-content: center; 
+    position: relative; height: 100%; 
+}
+
+.gh { color: #acacac; font-weight: bold;
+    font-size: clamp(6pt, 0.5rem, 8pt);
+    background: #666666;
+    pointer-events: none;
+    padding: 0;
+    /* container-type: size; */
+}
+
+.gm { 
+    pointer-events: none;
+    align-items: flex-end;
+}
+
+.gm span {
+    background: #666666;
+    color: #eee;
+    font-weight: bold;
+    text-transform: uppercase;
+    height: 75%;
+    /* display: flex; */
+    padding: 5pt;
+    /* padding: 0 0.8ch; */
+    font-size: clamp(0.5rem, 60cqh, 1.2rem);
+    /* width: max-content; */
+}
+
+.gm.left {justify-content: right; }
+.gm.right {justify-content: left;}
+/* .gm.left span { justify-self: end; margin-right: 2px; } */
+/* .gm.right span { justify-self: start; margin-left: 2px; } */
+
+.gh.s { background-color: #644444; }
+
+.gc { background: var(--bg-card);
+    cursor: pointer; container-type: size;
+    display: flex; align-items: flex-end; justify-content: left;
+    padding-left: 8%; padding-bottom: 10%;
+    font-size: clamp(5pt, 1.2vmin, 20pt);
+}
+
+@container grid-container (max-width: 280px) {
+    .gc { color: transparent !important; }
+}
+@container grid-container (max-width: 340px) {
+    .gh { display: none; }
+}
 
 .gc::after {
-    content: ''; position: absolute; top: 5%; right: 5%; width: 35cqmin; aspect-ratio: 1; 
+    content: ''; position: absolute; top: 5%; right: 5%; width: 1vmin; aspect-ratio: 1; 
     border-radius: 50%; pointer-events: none; background-color: var(--dot, transparent);
 }
 
-.pst { opacity: 0.85; }
+.fut { opacity: 0.9; }
 
-.tdy { outline: 0.2rem solid var(--accent); z-index: 2; }
+.tdy { outline: 0.35rem solid var(--accent); z-index: 2; }
 .sun { color: var(--sunday); font-weight: bold; }
 .gc:focus { outline: 2px solid var(--text); outline-offset: -2px; z-index: 5; }
-.res { opacity: 0.25; pointer-events: none; }
 .hc { background: var(--bg-content); color: var(--text-on-content); }
 .sm { outline: 0.25rem solid var(--primary); outline-offset: -0.15rem; animation: match-pulse 1.5s infinite; z-index: 3; }
 

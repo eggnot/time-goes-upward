@@ -6,5 +6,16 @@
   "background_color": "#222222",
   "theme_color": "#222222",
   "description": "A visual yearly diary for tracking your life on a grid.",
-  "icons": []
+  "icons": [
+    {
+      "src": "favicon-512x512.svg",
+      "sizes": "192x192",
+      "type": "image/svg"
+    },    
+    {
+      "src": "favicon-512x512.svg",
+      "sizes": "512x512",
+      "type": "image/svg"
+    }
+  ]
 }

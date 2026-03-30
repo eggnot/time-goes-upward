@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TimeUpward">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#f4f4f4">
+    <meta name="theme-color" content="#222222">
     <link rel="manifest" href="manifest.json">
 
     <title>Time goes upward</title>
@@ -18,87 +18,103 @@
 <nav class="modal-header">
     <div class="header-left">
         <div class="header-nav">
-            <button class="btn-icon" onclick="changeYear(-1)">❮</button>
-            <span id="current-year-display" class="header-label"></span>
-            <button class="btn-icon" onclick="changeYear(1)">❯</button>
+            <button class="btn-icon" onclick="changeYear(-1)" title="previous year">❮</button>
+            <span id="current-year-display" class="header-label" title="current year"></span>
+            <button class="btn-icon" onclick="changeYear(1)" title="next year">❯</button>
         </div>
     </div>
 
     <div class="header-center">
         <div class="search-container">
             <input type="text" id="search-bar" placeholder="search..." oninput="handleSearch(this.value)">
-            <button id="clear-search" class="hidden" onclick="clearSearch()">✕</button>
+            <button id="clear-search" class="hidden" onclick="clearSearch()" title="clear search">✕</button>
         </div>
 
     </div>
     <div class="header-right">
-        <select class="set-selector-ui" onchange="switchSet(this.value)"></select>
-        <button class="btn-icon" onclick="openModal('help-modal')">ⓘ</button>       
-        <button class="btn-icon" onclick="openModal('settings-modal')">⚙</button>
+        <select class="set-selector-ui" onchange="switchSet(this.value)" title="spaces"></select>
+        <button id="reset-zoom-btn" class="btn-icon hidden" onclick="resetZoom()" title="reset zoom">🎯</button>
+        <button class="btn-icon" onclick="openModal('help-modal')" title="help">❔</button>
+        <button class="btn-icon" onclick="openModal('settings-modal')" title="settings">⚙️</button>
     </div>
 </nav>
 
-<div id="app">
-</div>
+<div id="app"></div>
 
 <div id="editor" class="modal-window">
     <div class="modal-header">
         <div class="header-left">
-            <button onclick="closeEditor()" class="btn-icon">←</button>
+            <button onclick="closeEditor()" class="btn-icon" title="back">←</button>
         </div>
         <div class="header-center">
             <div class="header-nav">
-                <button onclick="navigateDay(-1)" class="btn-icon">❮</button>
-                <span id="editor-date-label" class="header-label"></span>
-                <button onclick="navigateDay(1)" class="btn-icon">❯</button>
+                <button onclick="navigateDay(-1)" class="btn-icon" title="previous day">❮</button>
+                <span id="editor-date-label" class="header-label" title="current day"></span>
+                <button onclick="navigateDay(1)" class="btn-icon" title="next day">❯</button>
             </div>
         </div>
         <div class="header-right">
-            <select class="set-selector-ui" onchange="switchSet(this.value)"></select>
-            <button class="btn-icon" onclick="openModal('settings-modal')">⚙</button>
-            <button onclick="closeEditor()" class="btn-icon">✕</button>
+            <select class="set-selector-ui" onchange="switchSet(this.value)" title="spaces"></select>
+            <button class="btn-icon" onclick="openModal('settings-modal')" title="settings">⚙</button>
+            <button onclick="closeEditor()" class="btn-icon" title="back">✕</button>
         </div>
     </div>
 
     <div class="text-input">
         <textarea id="diary-text" placeholder="Write here..."></textarea>
-        <input type="color" id="cell-color-picker" class="color-picker" title="Choose cell color">
+        <input type="color" id="cell-color-picker" class="color-picker" title="circle color">
     </div>
 
     <div class="editor-nav-row">
-        <button id="prev-entry-btn" onclick="navigateEntry(-1)" class="btn-text btn-set"></button>
-        <button id="next-entry-btn" onclick="navigateEntry(1)" class="btn-text btn-set"></button>
+        <button id="prev-entry-btn" onclick="navigateEntry(-1)" class="btn-text btn-set" title="previous text"></button>
+        <button id="next-entry-btn" onclick="navigateEntry(1)" class="btn-text btn-set" title="next text"></button>
     </div>
 </div>
 
 <div id="help-modal" class="modal-window">
     <div class="modal-header">
         <div class="header-left">
-            <button onclick="closeModal('help-modal')" class="btn-icon">←</button>
+            <button onclick="closeModal('help-modal')" class="btn-icon" title="back">←</button>
         </div>
         <div class="header-center">
-            <span class="header-label">About</span>
+            <span class="header-label">Help</span>
         </div>
         <div class="header-right">
-            <button class="btn-icon" onclick="openModal('settings-modal')">⚙</button>
-            <button onclick="closeModal('help-modal')" class="btn-icon">✕</button>
+            <button onclick="closeModal('help-modal')" class="btn-icon" title="back">✕</button>
         </div>
     </div>
     <div class="modal-body">
-        <p>Something here.</p>
+        <h3>Hello 🖖</h3>
+        <p>Let me know what should be here!</p>
+        <p>🤗</p>
+        <hr>
+        <a href="https://github.com/eggnot/time-goes-upward">source code</a>
+<!--    
+        <h3>🏳️‍🌈</h3>
+        <h3>Welcome to Time Upward 🖖</h3>
+        
+        <p>This is a vertical timeline where your year grows from the bottom up.</p>
+        <ul>
+            <li><strong>The Grid:</strong> Click any day to write a diary entry or set a highlight color.</li>
+            <li><strong>Sets (Spaces):</strong> Use the selector to switch between different journals or life categories.</li>
+            <li><strong>Navigation:</strong> Drag to pan, and use your mouse wheel or pinch to zoom. Use arrow keys to navigate days.</li>
+            <li><strong>Search:</strong> Quickly find specific memories; matching days will pulse in the grid.</li>
+            <li><strong>Data:</strong> Your data stays on your device. Use Settings to backup or restore via CSV.</li>
+        </ul>
+ -->
     </div>
 </div>
 
 <div id="settings-modal" class="modal-window">
     <div class="modal-header">
         <div class="header-left">
-            <button onclick="closeModal('settings-modal')" class="btn-icon">←</button>
+            <button onclick="closeModal('settings-modal')" class="btn-icon" title="back">←</button>
         </div>
         <div class="header-center">
             <span class="header-label">Settings and Tools</span>
         </div>
         <div class="header-right">
-            <button onclick="closeModal('settings-modal')" class="btn-icon">✕</button>
+            <button onclick="closeModal('settings-modal')" class="btn-icon" title="back">✕</button>
         </div>
     </div>
     <div class="modal-body">
@@ -111,23 +127,15 @@
             </div>
             <div class="setting-row">
                 <span>Font size</span>
-                <input type="range" id="cfg-font-size" min="8" max="42" value="16" oninput="updateFontSize(this.value)">
+                <input type="range" id="cfg-font-size" min="8" max="42" value="20" oninput="updateFontSize(this.value)">
             </div>
             <div class="setting-row">
-                <span>Trans parency</span>
-                <input type="range" id="cfg-modal-opacity" min="0.75" max="1" step="0.05" value="0.95" oninput="updateModalOpacity(this.value)">
+                <span>Transparency</span>
+                <input type="range" id="cfg-modal-opacity" min="0.75" max="1" step="0.025" value="0.95" oninput="updateModalOpacity(this.value)">
             </div>
             <div class="setting-row">
                 <span>Enable Zoom/Pan</span>
                 <input type="checkbox" id="cfg-zoom-enabled" onchange="toggleZoom(this.checked)">
-            </div>
-            <div class="setting-row">
-                <span>Grid Layout</span>
-                <select id="cfg-grid-orientation" onchange="updateGridOrientation(this.value)">
-                    <option value="auto">Auto (Responsive)</option>
-                    <option value="vert">Vertical</option>
-                    <option value="horiz">Horizontal</option>
-                </select>
             </div>
             
         </div>
@@ -135,6 +143,13 @@
         
         <div class="settings-group">
             <h3>Sets</h3>
+            <div class="setting-row">
+                <span>New Set</span>
+                <div class="settings-action-group">
+                    <input type="text" id="new-set-name" placeholder="Name..." maxlength="5">
+                    <button class="btn-text" onclick="addNewSet()">Add</button>
+                </div>
+            </div>            
             <div class="settings-group set-aware">
                 <div class="setting-row">
                     <span>Current</span>
@@ -155,13 +170,6 @@
                 </div>
             </div>
 
-            <div class="setting-row">
-                <span>New Set</span>
-                <div class="settings-action-group">
-                    <input type="text" id="new-set-name" placeholder="Name..." maxlength="5">
-                    <button class="btn-text" onclick="addNewSet()">Add</button>
-                </div>
-            </div>            
         </div>
 
 
@@ -179,7 +187,7 @@
 
         <div class="settings-group">
             <h3>Debug</h3>
-            <p>Fill couple of randon days for the active set (Current Year).</p>
+            <p>Fill couple of random days for the active set (Current Year).</p>
             <button class="btn-text btn-set" onclick="fillRandomData()">I feel lucky</button>
         </div>
 
@@ -191,10 +199,11 @@
         
     </div>
 </div>
+
 <div id="tooltip" class="tooltip hidden"></div>
     
-<!-- Scripts -->
     <script src="main.js" type="text/javascript" defer></script>
+    <script src="zoom.js" type="text/javascript" defer></script>
     <script src="grid.js" type="text/javascript" defer></script>
     <script src="state.js" type="text/javascript" defer></script>
     <script src="editor.js" type="text/javascript" defer></script>

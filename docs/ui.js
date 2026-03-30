@@ -2,7 +2,7 @@
 
 function changeYear(delta) {
     curYear += delta;
-    if (typeof resetZoom === 'function') resetZoom();
+    // if (typeof resetZoom === 'function') resetZoom();
     renderGrid();
 }
 
@@ -37,7 +37,7 @@ function updateSetSelector() {
     const display = document.getElementById('current-set-display');
     if (display) display.textContent = curSet;
     const deleteBtn = document.getElementById('delete-set-btn');
-    if (deleteBtn) deleteBtn.disabled = (curSet === 'def');
+    if (deleteBtn) deleteBtn.disabled = (curSet === DEFAULT_SET);
 }
 
 function switchSet(name) {
@@ -68,7 +68,7 @@ function addNewSet() {
 }
 
 function deleteCurrentSet() {
-    if (curSet === 'def') return alert("Cannot delete the default set.");
+    if (curSet === DEFAULT_SET) return alert("Cannot delete the default set.");
     if (!confirm(`Delete set "${curSet}" and ALL its data?`)) return;
 
     const prefix = `${KEY_PREFIX_SET}${curSet}${KEY_PREFIX_SEP}`;
@@ -76,7 +76,7 @@ function deleteCurrentSet() {
 
     sets = sets.filter(s => s !== curSet);
     localStorage.setItem(STORAGE_KEY_SETS, JSON.stringify(sets));
-    switchSet('def');
+    switchSet(DEFAULT_SET);
 }
 
 function toggleAnimation(enabled, save = true) {
@@ -92,12 +92,6 @@ function updateFontSize(size, save = true) {
 function updateModalOpacity(val, save = true) {
     document.documentElement.style.setProperty('--modal-opacity', val);
     if (save) localStorage.setItem(STORAGE_KEY_MODAL_OPACITY, val);
-}
-
-function updateGridOrientation(val, save = true) {
-    gridOrientation = val;
-    if (save) localStorage.setItem(STORAGE_KEY_GRID_ORIENTATION, val);
-    renderGrid();
 }
 
 function updateThemeColor(varName, value) {

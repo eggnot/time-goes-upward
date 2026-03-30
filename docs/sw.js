@@ -4,11 +4,13 @@ const ASSETS = [
   'index.html',
   'main.css',
   'main.js',
+  'zoom.js',
   'grid.js',
   'state.js',
   'editor.js',
   'ui.js',
-  'data.js'
+  'data.js',
+  'manifest.json'
 ];
 
 self.addEventListener('install', (event) => {

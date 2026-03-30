@@ -2,6 +2,11 @@
 
 Calendar notes, year at a glance. A stack of months where days are aligned by weeks.
 
+<iframe title="tgu" width="75%" height="340" src="https://eggnot.github.io/time-goes-upward/">
+</iframe><br /><br />
+
+
+
 <details>
 <summary>Why days go upward?</summary>
 
@@ -11,6 +16,8 @@ Calendar notes, year at a glance. A stack of months where days are aligned by we
 >Every day adds up. Days are like stacked bricks... They can crumble and your life collapses. But you continue to build. Time goes upwards, and life goes on.
 > -- <cite>Miss Kwadrat</cite>
 </details>
+
+
 
 ### Basics
 Fill days with text and color dots. Could be notes, logs or plans. Sets are the way to organize categories.
@@ -22,7 +29,7 @@ Useful for long term planning, daily reflections, writing little by little. It's
 Runs locally in your browser. Works without the internet—no servers, no tracking. Uses your browser's local storage for data. Export or import data to move between devices. It's plain text CSV; use it as a spreadsheet or whatever you need. 
 
 ### Support
-If you find this useful or nice, please support via PayPal or donation here. Likes and shares will help, feedback is highly appreciated!
+If you find this useful or nice, please support via PayPal to aleksey.grishchenko@gmail.com or donation here. Likes and shares will help, feedback is highly appreciated!
 
 ### Note
 

@@ -5,7 +5,7 @@ function exportCSV() {
     const entries = [];
 
     Object.keys(localStorage).forEach(k => {
-        let set = 'def', key = k;
+        let set = DEFAULT_SET, key = k;
         if (k.startsWith(KEY_PREFIX_SET)) {
             const parts = k.split(KEY_PREFIX_SEP);
             set = parts[1];
@@ -56,7 +56,7 @@ function importCSV(input) {
                     sets.push(space);
                     localStorage.setItem(STORAGE_KEY_SETS, JSON.stringify(sets));
                 }
-                const prefix = space === 'def' ? '' : `${KEY_PREFIX_SET}${space}${KEY_PREFIX_SEP}`;
+                const prefix = space === DEFAULT_SET ? '' : `${KEY_PREFIX_SET}${space}${KEY_PREFIX_SEP}`;
                 
                 const dKey = `${prefix}${KEY_PREFIX_CONTENT}${date}`;
                 const cKey = `${prefix}${KEY_PREFIX_COLOR}${date}`;

@@ -11,7 +11,7 @@ const STORAGE_KEY_BG_ANIM = 'tgu_global_bg_anim';
 const STORAGE_KEY_FONT_SIZE = 'tgu_global_font_size';
 const STORAGE_KEY_MODAL_OPACITY = 'tgu_global_modal_opacity';
 const STORAGE_KEY_ZOOM_ENABLED = 'tgu_global_zoom_enabled';
-const STORAGE_KEY_GRID_ORIENTATION = 'tgu_global_grid_orient';
+const DEFAULT_SET = 'life';
 
 const MONTHS_COUNT = 12;
 const DEFAULT_BG_COLOR = '#d0ff8a';
@@ -56,17 +56,12 @@ let curYear = new Date().getFullYear();
 let editKey = null;
 let editDate = null;
 let searchTerm = "";
-let zoomEnabled = true;
-let gridOrientation = 'auto';
-let isZoomedInHistory = false;
-let scale = 1, posX = 0, posY = 0, didPan = false;
 
 let lastRenderYear = null;
-let lastRenderOrient = null;
 let lastRenderSet = null;
 
-let curSet = localStorage.getItem(STORAGE_KEY_CURRENT_SET) || 'def';
-let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || '["def"]');
+let curSet = localStorage.getItem(STORAGE_KEY_CURRENT_SET) || DEFAULT_SET;
+let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || `["${DEFAULT_SET}"]`);
 
     // --- Core Logic ---
 
@@ -88,19 +83,15 @@ let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || '["def"]');
 
         document.documentElement.style.setProperty('--text-on-content', getContrastColor(themeDef['--bg-content']));
 
-        if (!sets.includes(curSet)) curSet = 'def';
+        if (!sets.includes(curSet)) curSet = DEFAULT_SET;
         updateSetSelector();
         applyGlobalSettings();
         applySetSettings();
-
-        const yrDisp = document.getElementById('current-year-display');
-        if (yrDisp) yrDisp.addEventListener('click', resetZoom);
 
         if (typeof applyUIContrast === 'function') applyUIContrast();
 
         renderGrid();
         setupPanZoom();
-        window.addEventListener('resize', renderGrid); // Re-render to fix grid placements if aspect ratio flips
 
         // Ensure UI elements and modals stay above the transformed grid
         app.style.zIndex = "1";
@@ -119,7 +110,7 @@ let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || '["def"]');
         // Allow navigating from search back to the grid
         searchBar.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowDown') {
-                const firstCell = app.querySelector('.gc:not(.res)');
+                const firstCell = app.querySelector('.gc');
                 if (firstCell) { firstCell.focus(); e.preventDefault(); }
             }
         });
@@ -165,7 +156,7 @@ let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || '["def"]');
     }
 
     function getSetKey(key) {
-        return curSet === 'def' ? key : `${KEY_PREFIX_SET}${curSet}${KEY_PREFIX_SEP}${key}`;
+        return curSet === DEFAULT_SET ? key : `${KEY_PREFIX_SET}${curSet}${KEY_PREFIX_SEP}${key}`;
     }
 
     function getStorageKey(y, m, d) {
@@ -174,7 +165,7 @@ let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || '["def"]');
     }
 
     function getSetDataKeys() {
-        const prefix = curSet === 'def' ? KEY_PREFIX_CONTENT : `${KEY_PREFIX_SET}${curSet}${KEY_PREFIX_SEP}${KEY_PREFIX_CONTENT}`;
+        const prefix = curSet === DEFAULT_SET ? KEY_PREFIX_CONTENT : `${KEY_PREFIX_SET}${curSet}${KEY_PREFIX_SEP}${KEY_PREFIX_CONTENT}`;
         return Object.keys(localStorage).filter(k => k.startsWith(prefix)).sort();
     }
 
@@ -202,11 +193,6 @@ let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || '["def"]');
         const zoomToggle = document.getElementById('cfg-zoom-enabled');
         if (zoomToggle) zoomToggle.checked = zoomVal;
         toggleZoom(zoomVal, false);
-
-        // Load Grid Orientation
-        gridOrientation = localStorage.getItem(STORAGE_KEY_GRID_ORIENTATION) || 'auto';
-        const orientSelect = document.getElementById('cfg-grid-orientation');
-        if (orientSelect) orientSelect.value = gridOrientation;
     }
 
     function applySetSettings() {
@@ -239,7 +225,8 @@ let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || '["def"]');
         let tr = parseInt(active.dataset.r);
         let tc = parseInt(active.dataset.c);
 
-        const dr = e.key === 'ArrowUp' ? -1 : (e.key === 'ArrowDown' ? 1 : 0);
+        // Skip label rows by moving 2 units vertically
+        const dr = e.key === 'ArrowUp' ? -2 : (e.key === 'ArrowDown' ? 2 : 0);
         const dc = e.key === 'ArrowLeft' ? -1 : (e.key === 'ArrowRight' ? 1 : 0);
 
         if (dr === 0 && dc === 0) {
@@ -250,18 +237,14 @@ let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || '["def"]');
         e.preventDefault();
         let target = null;
 
-        // Loop to skip residue cells (.res) until we hit a valid one or the grid edge
         while (true) {
             tr += dr; tc += dc;
-            const cand = app.querySelector(`.gc[data-r="${tr}"][data-c="${tc}"]`);
-            
-            if (!cand) {
-                // If moving UP out of grid, jump to search bar
+            if (tr < 1 || tr > 23 || tc < 1 || tc > 37) {
                 if (dr === -1 && searchBar) searchBar.focus();
                 break;
             }
-            
-            if (!cand.classList.contains('res')) {
+            const cand = app.querySelector(`.gc[data-r="${tr}"][data-c="${tc}"]`);
+            if (cand) {
                 target = cand;
                 break;
             }
@@ -270,147 +253,15 @@ let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || '["def"]');
         if (target) target.focus();
     }
 
-    function applyTransform() {
-        if (!app) return;
-        app.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
-
-        // Reflect zoom in history so browser back button can reset it
-        const currentlyZoomed = (scale !== 1 || posX !== 0 || posY !== 0);
-        if (currentlyZoomed && !isZoomedInHistory) {
-            isZoomedInHistory = true;
-            history.pushState({ zoom: true }, "", "#zoom");
-        }
-    }
-
-    function toggleZoom(enabled, save = true) {
-        zoomEnabled = enabled;
-        document.body.style.touchAction = enabled ? 'none' : 'auto';
-        if (!enabled) resetZoom();
-        if (save) localStorage.setItem(STORAGE_KEY_ZOOM_ENABLED, enabled);
-    }
-
-    function resetZoom(triggerBack = true) {
-        const wasZoomed = isZoomedInHistory;
-        scale = 1; posX = 0; posY = 0;
-        isZoomedInHistory = false;
-        applyTransform();
-        if (triggerBack && wasZoomed && window.location.hash === '#zoom') {
-            history.back();
-        }
-    }
-
-    function setupPanZoom() {
-        let startPoint = { x: 0, y: 0 };
-        let startPos = { x: 0, y: 0 };
-        let points = new Map();
-        let initialDistance = 0;
-        let initialScale = 1;
-        let initialMidpoint = { x: 0, y: 0 };
-        let initialPos = { x: 0, y: 0 };
-
-        app.style.transformOrigin = '0 0';
-
-        document.addEventListener('pointerdown', (e) => {
-            didPan = false; // Ensure flag is reset even for UI clicks
-            if (!zoomEnabled || editor.classList.contains('open')) return;
-            if (e.target.closest('.modal-header, .modal-window')) return;
-
-            points.set(e.pointerId, e);
-            
-            if (points.size === 1) {
-                startPoint = { x: e.clientX, y: e.clientY };
-                startPos = { x: posX, y: posY };
-            } else if (points.size === 2) {
-                const p = Array.from(points.values());
-                initialDistance = Math.hypot(p[0].clientX - p[1].clientX, p[0].clientY - p[1].clientY);
-                initialScale = scale;
-                initialMidpoint = { x: (p[0].clientX + p[1].clientX) / 2, y: (p[0].clientY + p[1].clientY) / 2 };
-                initialPos = { x: posX, y: posY };
-            }
-        });
-
-        document.addEventListener('pointermove', (e) => {
-            if (!zoomEnabled || !points.has(e.pointerId)) return;
-            points.set(e.pointerId, e);
-
-            if (points.size === 1) {
-                const dx = e.clientX - startPoint.x;
-                const dy = e.clientY - startPoint.y;
-                if (Math.hypot(dx, dy) > 5) {
-                    didPan = true;
-                    posX = startPos.x + dx;
-                    posY = startPos.y + dy;
-                    applyTransform();
-                }
-            } else if (points.size === 2) {
-                didPan = true;
-                const p = Array.from(points.values());
-                const curDist = Math.hypot(p[0].clientX - p[1].clientX, p[0].clientY - p[1].clientY);
-                const midX = (p[0].clientX + p[1].clientX) / 2;
-                const midY = (p[0].clientY + p[1].clientY) / 2;
-
-                if (initialDistance > 0) {
-                    const newScale = Math.max(0.2, Math.min(5, initialScale * (curDist / initialDistance)));
-                    posX = midX - (initialMidpoint.x - initialPos.x) * (newScale / initialScale);
-                    posY = midY - (initialMidpoint.y - initialPos.y) * (newScale / initialScale);
-                    scale = newScale;
-                    applyTransform();
-                }
-            }
-        });
-
-        const stop = (e) => {
-            points.delete(e.pointerId);
-            if (points.size === 1) {
-                const remaining = points.values().next().value;
-                startPoint = { x: remaining.clientX, y: remaining.clientY };
-                startPos = { x: posX, y: posY };
-            }
-            if (points.size < 2) initialDistance = 0;
-        };
-        document.addEventListener('pointerup', stop);
-        document.addEventListener('pointercancel', stop);
-
-        document.addEventListener('wheel', (e) => {
-            if (!zoomEnabled || editor.classList.contains('open')) return;
-            if (e.target.closest('.modal-header, .modal-window')) return;
-            e.preventDefault();
-
-            const delta = e.deltaY > 0 ? 0.9 : 1.1;
-            const newScale = Math.max(0.2, Math.min(5, scale * delta));
-
-            // Zoom toward mouse position
-            posX = e.clientX - (e.clientX - posX) * (newScale / scale);
-            posY = e.clientY - (e.clientY - posY) * (newScale / scale);
-            scale = newScale;
-
-            applyTransform();
-        }, { passive: false });
-
-        document.addEventListener('click', (e) => {
-            if (didPan) {
-                e.stopImmediatePropagation();
-                didPan = false;
-            }
-        }, true);
-    }
-
     function renderGrid() {
-        const isPortraitWindow = window.innerHeight > window.innerWidth;
-        let effectivePortrait = isPortraitWindow;
-
-        if (gridOrientation === 'vert') effectivePortrait = true;
-        else if (gridOrientation === 'horiz') effectivePortrait = false;
-        
-        if (curYear === lastRenderYear && effectivePortrait === lastRenderOrient && curSet === lastRenderSet) {
+        if (curYear === lastRenderYear && curSet === lastRenderSet) {
             updateCellStates();
             return;
         }
 
-        fullRebuild(effectivePortrait);
+        fullRebuild();
         
         lastRenderYear = curYear;
-        lastRenderOrient = effectivePortrait;
         lastRenderSet = curSet;
     }
 
