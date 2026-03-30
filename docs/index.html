@@ -1,9 +1,205 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Time goes upward!</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TimeUpward">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#f4f4f4">
+    <link rel="manifest" href="manifest.json">
+
+    <title>Time goes upward</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
 </head>
 <body>
-  <h1>Time goes upward!</h1>
+
+<nav class="modal-header">
+    <div class="header-left">
+        <div class="header-nav">
+            <button class="btn-icon" onclick="changeYear(-1)">❮</button>
+            <span id="current-year-display" class="header-label"></span>
+            <button class="btn-icon" onclick="changeYear(1)">❯</button>
+        </div>
+    </div>
+
+    <div class="header-center">
+        <div class="search-container">
+            <input type="text" id="search-bar" placeholder="search..." oninput="handleSearch(this.value)">
+            <button id="clear-search" class="hidden" onclick="clearSearch()">✕</button>
+        </div>
+
+    </div>
+    <div class="header-right">
+        <select class="set-selector-ui" onchange="switchSet(this.value)"></select>
+        <button class="btn-icon" onclick="openModal('help-modal')">ⓘ</button>       
+        <button class="btn-icon" onclick="openModal('settings-modal')">⚙</button>
+    </div>
+</nav>
+
+<div id="app">
+</div>
+
+<div id="editor" class="modal-window">
+    <div class="modal-header">
+        <div class="header-left">
+            <button onclick="closeEditor()" class="btn-icon">←</button>
+        </div>
+        <div class="header-center">
+            <div class="header-nav">
+                <button onclick="navigateDay(-1)" class="btn-icon">❮</button>
+                <span id="editor-date-label" class="header-label"></span>
+                <button onclick="navigateDay(1)" class="btn-icon">❯</button>
+            </div>
+        </div>
+        <div class="header-right">
+            <select class="set-selector-ui" onchange="switchSet(this.value)"></select>
+            <button class="btn-icon" onclick="openModal('settings-modal')">⚙</button>
+            <button onclick="closeEditor()" class="btn-icon">✕</button>
+        </div>
+    </div>
+
+    <div class="text-input">
+        <textarea id="diary-text" placeholder="Write here..."></textarea>
+        <input type="color" id="cell-color-picker" class="color-picker" title="Choose cell color">
+    </div>
+
+    <div class="editor-nav-row">
+        <button id="prev-entry-btn" onclick="navigateEntry(-1)" class="btn-text btn-set"></button>
+        <button id="next-entry-btn" onclick="navigateEntry(1)" class="btn-text btn-set"></button>
+    </div>
+</div>
+
+<div id="help-modal" class="modal-window">
+    <div class="modal-header">
+        <div class="header-left">
+            <button onclick="closeModal('help-modal')" class="btn-icon">←</button>
+        </div>
+        <div class="header-center">
+            <span class="header-label">About</span>
+        </div>
+        <div class="header-right">
+            <button class="btn-icon" onclick="openModal('settings-modal')">⚙</button>
+            <button onclick="closeModal('help-modal')" class="btn-icon">✕</button>
+        </div>
+    </div>
+    <div class="modal-body">
+        <p>Something here.</p>
+    </div>
+</div>
+
+<div id="settings-modal" class="modal-window">
+    <div class="modal-header">
+        <div class="header-left">
+            <button onclick="closeModal('settings-modal')" class="btn-icon">←</button>
+        </div>
+        <div class="header-center">
+            <span class="header-label">Settings and Tools</span>
+        </div>
+        <div class="header-right">
+            <button onclick="closeModal('settings-modal')" class="btn-icon">✕</button>
+        </div>
+    </div>
+    <div class="modal-body">
+
+        <div class="settings-group">
+            <h3>Global Appearance</h3>
+            <div class="setting-row">
+                <span>Animate background</span>
+                <input type="checkbox" id="bg-animation-toggle" onchange="toggleAnimation(this.checked)">
+            </div>
+            <div class="setting-row">
+                <span>Font size</span>
+                <input type="range" id="cfg-font-size" min="8" max="42" value="16" oninput="updateFontSize(this.value)">
+            </div>
+            <div class="setting-row">
+                <span>Trans parency</span>
+                <input type="range" id="cfg-modal-opacity" min="0.75" max="1" step="0.05" value="0.95" oninput="updateModalOpacity(this.value)">
+            </div>
+            <div class="setting-row">
+                <span>Enable Zoom/Pan</span>
+                <input type="checkbox" id="cfg-zoom-enabled" onchange="toggleZoom(this.checked)">
+            </div>
+            <div class="setting-row">
+                <span>Grid Layout</span>
+                <select id="cfg-grid-orientation" onchange="updateGridOrientation(this.value)">
+                    <option value="auto">Auto (Responsive)</option>
+                    <option value="vert">Vertical</option>
+                    <option value="horiz">Horizontal</option>
+                </select>
+            </div>
+            
+        </div>
+        
+        
+        <div class="settings-group">
+            <h3>Sets</h3>
+            <div class="settings-group set-aware">
+                <div class="setting-row">
+                    <span>Current</span>
+                    <select class="set-selector-ui" onchange="switchSet(this.value)"></select>
+                    <button id="delete-set-btn" class   ="btn-text btn-danger" onclick="deleteCurrentSet()">Delete</button>
+                </div>                
+                <div class="setting-row">
+                    <span>Highlight</span>
+                    <input type="color" id="cfg-bg-content" onchange="updateThemeColor('--bg-content', this.value)">
+                </div>
+                <div class="setting-row">
+                    <span>Match</span>
+                    <input type="color" id="cfg-primary" onchange="updateThemeColor('--primary', this.value)">
+                </div>
+                <div class="setting-row">
+                    <span>Tooltip</span>
+                    <input type="color" id="cfg-bg-tooltip" onchange="updateThemeColor('--bg-tooltip', this.value)">
+                </div>
+            </div>
+
+            <div class="setting-row">
+                <span>New Set</span>
+                <div class="settings-action-group">
+                    <input type="text" id="new-set-name" placeholder="Name..." maxlength="5">
+                    <button class="btn-text" onclick="addNewSet()">Add</button>
+                </div>
+            </div>            
+        </div>
+
+
+
+        <div class="settings-group">
+            <h3>Data Management</h3>
+            <p>Export to a CSV file or import data from a previous backup.</p>
+            <div class="settings-actions">
+                <button class="btn-text" onclick="exportCSV()">Export CSV</button>
+                <button class="btn-text" onclick="document.getElementById('import-file').click()">Import CSV</button>
+                <input type="file" id="import-file" class="hidden" accept=".csv" onchange="importCSV(this)">
+                
+            </div>
+        </div>
+
+        <div class="settings-group">
+            <h3>Debug</h3>
+            <p>Fill couple of randon days for the active set (Current Year).</p>
+            <button class="btn-text btn-set" onclick="fillRandomData()">I feel lucky</button>
+        </div>
+
+        <div class="settings-group">
+            <h3>Danger Zone</h3>
+            <p>Permanently delete all data from this device.</p>
+            <button class="btn-text btn-danger" onclick="clearAllData()">Delete All Data</button>
+        </div>        
+        
+    </div>
+</div>
+<div id="tooltip" class="tooltip hidden"></div>
+    
+<!-- Scripts -->
+    <script src="main.js" type="text/javascript" defer></script>
+    <script src="grid.js" type="text/javascript" defer></script>
+    <script src="state.js" type="text/javascript" defer></script>
+    <script src="editor.js" type="text/javascript" defer></script>
+    <script src="ui.js" type="text/javascript" defer></script>
+    <script src="data.js" type="text/javascript" defer></script>
+    
 </body>
-</html> 
+</html>

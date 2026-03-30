@@ -1,0 +1,10 @@
+{
+  "name": "Time goes upward",
+  "short_name": "TimeUpward",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#222222",
+  "theme_color": "#222222",
+  "description": "A visual yearly diary for tracking your life on a grid.",
+  "icons": []
+}
