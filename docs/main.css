@@ -14,8 +14,8 @@
     --font-size: 20pt;
     --modal-opacity: 1;
     --header-h: clamp(2rem, 3vw, 3.5rem);
-    --ui-height: calc(var(--header-h) * 0.7);
-    --ui-font-size: calc(var(--header-h) * 0.4);
+    --ui-height: calc(var(--header-h) * 0.75);
+    --ui-font-size: calc(var(--header-h) * 0.5);
     --ui-radius: 0.4rem;
 }
 
@@ -154,7 +154,7 @@ button:focus-visible { outline: 2px solid var(--accent); }
     cursor: pointer; container-type: size;
     display: flex; align-items: flex-end; justify-content: left;
     padding-left: 8%; padding-bottom: 10%;
-    font-size: clamp(5pt, 1.2vmin, 20pt);
+    font-size: clamp(5pt, 2vmin, 20pt);
 }
 
 @container grid-container (max-width: 280px) {

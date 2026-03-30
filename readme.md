@@ -2,10 +2,9 @@
 
 Calendar notes, year at a glance. A stack of months where days are aligned by weeks.
 
-<iframe title="tgu" width="75%" height="340" src="https://eggnot.github.io/time-goes-upward/">
-</iframe><br /><br />
+![alt text](https://eggnot.github.io/time-goes-upward/images/main-horizontal.png)
 
-
+<br /><br />
 
 <details>
 <summary>Why days go upward?</summary>
