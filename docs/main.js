@@ -107,7 +107,17 @@ let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || `["${DEFAULT_SET
             navigator.serviceWorker.register(SW_FILENAME).catch(() => {});
         }
 
-        app.addEventListener('keydown', handleGridKeyDown);
+        // Event Delegation for Grid Interaction
+        app.onclick = (e) => {
+            const cell = e.target.closest('.gc');
+            if (cell) { hideTooltip(); openEditor(parseKeyDate(cell.dataset.k), cell.dataset.k); }
+        };
+        app.onmouseover = (e) => {
+            const cell = e.target.closest('.gc');
+            if (cell) showTooltip(e, cell.dataset.k);
+        };
+        app.onmousemove = (e) => moveTooltip(e);
+        app.onmouseout = (e) => { if (e.target.closest('.gc')) hideTooltip(); };
         
         // Allow navigating from search back to the grid
         searchBar.addEventListener('keydown', (e) => {
@@ -252,7 +262,7 @@ let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || `["${DEFAULT_SET
 
         while (true) {
             tr += dr; tc += dc;
-            if (tr < 1 || tr > 12 || tc < 1 || tc > 37) {
+            if (tr < 1 || tr > MONTHS_COUNT || tc < 1 || tc > MAX_CELLS_PER_MONTH) {
                 if (dr === -1 && searchBar) searchBar.focus();
                 break;
             }

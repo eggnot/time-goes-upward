@@ -110,15 +110,15 @@ button:focus-visible { outline: 2px solid var(--accent); }
 
 #app { 
     display: grid; flex: 1; gap: 1px; width: 100%; height: 100%; 
-    container-type: inline-size;
-    container-name: grid-container;
+    /* Grid logic determined by percentage tracks in JS */
+    will-change: transform;
 }
 
 .gh, .gc, .gm { 
     display: flex;
     align-items: center;
     justify-content: center; 
-    /* position: relative; height: 100%;  */
+    position: relative; height: 100%;
 }
 
 .gm { 
@@ -144,10 +144,10 @@ button:focus-visible { outline: 2px solid var(--accent); }
 
 .gc { background: var(--bg-card);
     cursor: pointer;
-    /* container-type: size; */
-    /* display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 0; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
     
     font-size: clamp(5pt, 2vmin, 20pt);
 }
@@ -158,8 +158,19 @@ button:focus-visible { outline: 2px solid var(--accent); }
 @container grid-container (max-width: 280px) {
     .gc { color: transparent !important; }
 }
-@container grid-container (max-width: 340px) {
+@media (max-height: 400px), (max-width: 400px) {
     .gc small { display: none; }
+}
+
+.gc span {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    width: 100%;
+}
+
+.gc small {
+    width: 100%; background: #666; color: #eee;
+    height: 1.4em; display: flex; align-items: center; justify-content: center;
+    font-size: 0.4em; font-weight: bold; text-transform: uppercase;
 }
 
 .gh { color: #acacac; font-weight: bold;
@@ -172,7 +183,7 @@ button:focus-visible { outline: 2px solid var(--accent); }
 
 
 .gc::after {
-    content: ''; position: relative; top: -25%; width: 1.5vmin; aspect-ratio: 1; 
+    content: ''; position: absolute; top: 10%; right: 10%; width: 1.5vmin; aspect-ratio: 1; 
     border-radius: 50%; pointer-events: none; background-color: var(--dot, transparent);
 }
 

@@ -14,24 +14,23 @@ function fullRebuild() {
     const todayKey = getStorageKey(now.getFullYear(), now.getMonth() + 1, now.getDate());
     const todayStart = new Date().setHours(0, 0, 0, 0);
 
-    app.style.gridTemplateColumns = `repeat(${MAX_CELLS_PER_MONTH}, 1fr)`;
-    app.style.gridTemplateRows =    `repeat(${MONTHS_COUNT}, 1fr auto)`;
+    app.style.gridTemplateColumns = `repeat(${MAX_CELLS_PER_MONTH}, ${(100/MAX_CELLS_PER_MONTH).toFixed(4)}%)`;
+    app.style.gridTemplateRows =    `repeat(${MONTHS_COUNT}, ${(100/MONTHS_COUNT).toFixed(4)}%)`;
 
     // Grid Cells
     for (let m = 0; m < MONTHS_COUNT; m++) {
         const firstDayOffset = new Date(curYear, m, 1).getDay(); // 0 (Sun) to 6 (Sat)
         const daysInMonth = new Date(curYear, m + 1, 0).getDate();
-        const dataRow = (MONTHS_COUNT - 1 - m) * 2 + 1;
-        const labelRow = dataRow + 1;
+        const dataRow = MONTHS_COUNT - m;
         const monthLabel = MONTH_LABELS[m];
 
         const leftGap = firstDayOffset;
         const rightGap = MAX_CELLS_PER_MONTH - (firstDayOffset + daysInMonth);
 
         if (leftGap >= rightGap && leftGap > 0) {
-            createHeader(monthLabel, dataRow, labelRow + 1, 1, leftGap + 1, false, fragment, 'gm left');
+            createHeader(monthLabel, dataRow, dataRow + 1, 1, leftGap + 1, false, fragment, 'gm left');
         } else if (rightGap > 0) {
-            createHeader(monthLabel, dataRow, labelRow + 1, firstDayOffset + daysInMonth + 1, MAX_CELLS_PER_MONTH + 1, false, fragment, 'gm right');
+            createHeader(monthLabel, dataRow, dataRow + 1, firstDayOffset + daysInMonth + 1, MAX_CELLS_PER_MONTH + 1, false, fragment, 'gm right');
         }
 
         for (let d = 1; d <= daysInMonth; d++) {
@@ -51,10 +50,15 @@ function fullRebuild() {
             el.dataset.c = col;            
             el.tabIndex = 0;
             el.dataset.k = storageKey;
-            el.textContent = String(dateObj.getDate());
+            
+            const span = document.createElement('span');
+            span.textContent = d;
+            
+            const small = document.createElement('small');
+            const dayOfWeek = WEEK_LABELS[(col - 1) % 7];
+            small.textContent = dayOfWeek;
 
-            // Add week label underneath
-            createHeader(WEEK_LABELS[(col - 1) % 7], labelRow, labelRow + 1, col, col + 1, (col - 1) % 7 === 0, fragment, 'gh');
+            el.append(span, small);
 
             if (dateObj.getDay() === 0) el.classList.add('sun');
             el.classList.add((dateObj > todayStart) ? 'f' : 'p');
@@ -63,11 +67,6 @@ function fullRebuild() {
             if (storageKey === todayKey) el.classList.add('tdy');
             if (color) el.style.setProperty('--dot', color);
 
-            el.onclick = () => { hideTooltip(); openEditor(dateObj, storageKey); };
-            el.onmouseenter = (e) => showTooltip(e, storageKey);
-            el.onmousemove = (e) => moveTooltip(e);
-            el.onmouseleave = hideTooltip;
-            
             fragment.appendChild(el);
         }
     }
