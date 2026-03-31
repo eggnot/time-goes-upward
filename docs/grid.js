@@ -57,7 +57,7 @@ function fullRebuild() {
             createHeader(WEEK_LABELS[(col - 1) % 7], labelRow, labelRow + 1, col, col + 1, (col - 1) % 7 === 0, fragment, 'gh');
 
             if (dateObj.getDay() === 0) el.classList.add('sun');
-            if (dateObj > todayStart) el.classList.add('fut');
+            el.classList.add((dateObj > todayStart) ? 'f' : 'p');
             if (content) el.classList.add('hc');
             if (searchTerm && content.toLowerCase().includes(searchTerm)) el.classList.add('sm');
             if (storageKey === todayKey) el.classList.add('tdy');

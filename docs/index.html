@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TimeUpward">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#222222">
+    
+    <link rel="icon" href="favicon.ico" />
+    
     <link rel="manifest" href="manifest.json">
 
     <title>Time goes upward</title>
@@ -17,6 +21,7 @@
 
 <nav class="modal-header">
     <div class="header-left">
+        <button id="toggle-nav-btn" class="btn-icon" onclick="toggleNavBar()" title="hide navigation">👁️</button>
         <div class="header-nav">
             <button class="btn-icon" onclick="changeYear(-1)" title="previous year">❮</button>
             <span id="current-year-display" class="header-label" title="current year"></span>
@@ -32,10 +37,11 @@
 
     </div>
     <div class="header-right">
-        <select class="set-selector-ui" onchange="switchSet(this.value)" title="spaces"></select>
+        <select name="set-selector-main" class="set-selector-ui" onchange="switchSet(this.value)" title="spaces"></select>
         <button id="reset-zoom-btn" class="btn-icon hidden" onclick="resetZoom()" title="reset zoom">🎯</button>
-        <button class="btn-icon" onclick="openModal('help-modal')" title="help">❔</button>
-        <button class="btn-icon" onclick="openModal('settings-modal')" title="settings">⚙️</button>
+        
+        <button class="btn-icon" onclick="openModal('help-modal')" title="help">💬</button>
+        <button class="btn-icon" onclick="openModal('settings-modal')" title="settings">🛠️</button>
     </div>
 </nav>
 
@@ -54,7 +60,7 @@
             </div>
         </div>
         <div class="header-right">
-            <select class="set-selector-ui" onchange="switchSet(this.value)" title="spaces"></select>
+            <select name="set-selector-editor" class="set-selector-ui" onchange="switchSet(this.value)" title="spaces"></select>
             <button class="btn-icon" onclick="openModal('settings-modal')" title="settings">⚙</button>
             <button onclick="closeEditor()" class="btn-icon" title="back">✕</button>
         </div>
@@ -84,11 +90,18 @@
         </div>
     </div>
     <div class="modal-body">
+        
         <h3>Hello 🖖</h3>
         <p>Let me know what should be here!</p>
-        <p>🤗</p>
-        <hr>
-        <a href="https://github.com/eggnot/time-goes-upward">source code</a>
+        
+        <p>
+            Project page and source code: 
+            <a href="https://github.com/eggnot/time-goes-upward">github.com/eggnot/time-goes-upward</a>
+        </p>
+        
+        <p>v 0.11</p>
+
+        <p>Aleksey Grishchenko, 2026</p>
 <!--    
         <h3>🏳️‍🌈</h3>
         <h3>Welcome to Time Upward 🖖</h3>
@@ -102,7 +115,7 @@
             <li><strong>Data:</strong> Your data stays on your device. Use Settings to backup or restore via CSV.</li>
         </ul>
  -->
-        v 0.1
+
     </div>
 </div>
 
@@ -122,10 +135,27 @@
 
         <div class="settings-group">
             <h3>Global Appearance</h3>
+            <h4>Grid view</h4>
             <div class="setting-row">
                 <span>Animate background</span>
                 <input type="checkbox" id="bg-animation-toggle" onchange="toggleAnimation(this.checked)">
             </div>
+            
+            <div class="setting-row">
+                <span>Enable Zoom/Pan</span>
+                <input type="checkbox" id="cfg-zoom-enabled" onchange="toggleZoom(this.checked)">
+            </div>
+
+            <div class="setting-row">
+                <span>Past opacity</span>
+                <input type="range" id="cfg-opacity-past" min="0" max="1" step="0.05" value="1" oninput="updatePastOpacity(this.value)">
+            </div>
+            <div class="setting-row">
+                <span>Future opacity</span>
+                <input type="range" id="cfg-opacity-future" min="0" max="1" step="0.05" value="0.9" oninput="updateFutureOpacity(this.value)">
+            </div>
+            
+            <h4>Editor + Menus</h4>
             <div class="setting-row">
                 <span>Font size</span>
                 <input type="range" id="cfg-font-size" min="8" max="42" value="20" oninput="updateFontSize(this.value)">
@@ -134,11 +164,7 @@
                 <span>Transparency</span>
                 <input type="range" id="cfg-modal-opacity" min="0.75" max="1" step="0.025" value="0.95" oninput="updateModalOpacity(this.value)">
             </div>
-            <div class="setting-row">
-                <span>Enable Zoom/Pan</span>
-                <input type="checkbox" id="cfg-zoom-enabled" onchange="toggleZoom(this.checked)">
-            </div>
-            
+
         </div>
         
         
@@ -154,7 +180,7 @@
             <div class="settings-group set-aware">
                 <div class="setting-row">
                     <span>Current</span>
-                    <select class="set-selector-ui" onchange="switchSet(this.value)"></select>
+                <select name="set-selector-settings" class="set-selector-ui" onchange="switchSet(this.value)"></select>
                     <button id="delete-set-btn" class   ="btn-text btn-danger" onclick="deleteCurrentSet()">Delete</button>
                 </div>                
                 <div class="setting-row">

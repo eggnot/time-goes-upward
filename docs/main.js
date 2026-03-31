@@ -10,6 +10,8 @@ const STORAGE_KEY_CURRENT_SET = 'tgu_current_set';
 const STORAGE_KEY_BG_ANIM = 'tgu_global_bg_anim';
 const STORAGE_KEY_FONT_SIZE = 'tgu_global_font_size';
 const STORAGE_KEY_MODAL_OPACITY = 'tgu_global_modal_opacity';
+const STORAGE_KEY_OPACITY_PAST = 'tgu_global_opacity_past';
+const STORAGE_KEY_OPACITY_FUTURE = 'tgu_global_opacity_future';
 const STORAGE_KEY_ZOOM_ENABLED = 'tgu_global_zoom_enabled';
 const DEFAULT_SET = 'life';
 
@@ -188,6 +190,18 @@ let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || `["${DEFAULT_SET
         if (opacityInput) opacityInput.value = modalOpacity;
         updateModalOpacity(modalOpacity, false);
 
+        // Load Past Opacity
+        const pastOpacity = localStorage.getItem(STORAGE_KEY_OPACITY_PAST) || '1';
+        const pastInput = document.getElementById('cfg-opacity-past');
+        if (pastInput) pastInput.value = pastOpacity;
+        updatePastOpacity(pastOpacity, false);
+
+        // Load Future Opacity
+        const futureOpacity = localStorage.getItem(STORAGE_KEY_OPACITY_FUTURE) || '0.85';
+        const futureInput = document.getElementById('cfg-opacity-future');
+        if (futureInput) futureInput.value = futureOpacity;
+        updateFutureOpacity(futureOpacity, false);
+
         // Load Zoom State
         const zoomVal = localStorage.getItem(STORAGE_KEY_ZOOM_ENABLED) !== 'false';
         const zoomToggle = document.getElementById('cfg-zoom-enabled');
@@ -225,8 +239,7 @@ let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || `["${DEFAULT_SET
         let tr = parseInt(active.dataset.r);
         let tc = parseInt(active.dataset.c);
 
-        // Skip label rows by moving 2 units vertically
-        const dr = e.key === 'ArrowUp' ? -2 : (e.key === 'ArrowDown' ? 2 : 0);
+        const dr = e.key === 'ArrowUp' ? -1 : (e.key === 'ArrowDown' ? 1 : 0);
         const dc = e.key === 'ArrowLeft' ? -1 : (e.key === 'ArrowRight' ? 1 : 0);
 
         if (dr === 0 && dc === 0) {
@@ -239,7 +252,7 @@ let sets = JSON.parse(localStorage.getItem(STORAGE_KEY_SETS) || `["${DEFAULT_SET
 
         while (true) {
             tr += dr; tc += dc;
-            if (tr < 1 || tr > 23 || tc < 1 || tc > 37) {
+            if (tr < 1 || tr > 12 || tc < 1 || tc > 37) {
                 if (dr === -1 && searchBar) searchBar.focus();
                 break;
             }

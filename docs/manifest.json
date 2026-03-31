@@ -1,17 +1,12 @@
 {
   "name": "Time goes upward",
   "short_name": "TimeUpward",
-  "start_url": "index.html",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#222222",
   "theme_color": "#222222",
   "description": "A visual yearly diary for tracking your life on a grid.",
   "icons": [
-    {
-      "src": "favicon-512x512.svg",
-      "sizes": "192x192",
-      "type": "image/svg"
-    },    
     {
       "src": "favicon-512x512.svg",
       "sizes": "512x512",

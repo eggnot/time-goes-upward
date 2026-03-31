@@ -33,6 +33,7 @@ function openEditor(dateObj, key) {
     editor.classList.add('open');
     setTimeout(() => textArea.focus(), TOOLTIP_FOCUS_DELAY_MS);
     history.pushState({editorOpen: true}, "", "#editor");
+    if (typeof updateToggleBtnVisibility === 'function') updateToggleBtnVisibility();
 }
 
 function updateNavButton(btn, targetKey, isPrev) {
@@ -73,6 +74,7 @@ function closeEditor(goBack = true) {
     renderGrid();
     if (lastFocus) lastFocus.focus();
     if (goBack) history.back();
+    if (typeof updateToggleBtnVisibility === 'function') updateToggleBtnVisibility();
 }
 
 function navigateDay(delta) {

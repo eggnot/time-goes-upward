@@ -7,15 +7,14 @@ webapp: https://eggnot.github.io/time-goes-upward/
 [![tgu](https://eggnot.com/time-goes-upward/images/main-horizontal.png)](https://eggnot.github.io/time-goes-upward/)
 
 
-<details>
-<summary>Why days go upward?</summary>
+Why days go upward?
 
 >Time doesn't go down, time goes up...
 >Maybe you're reading from let to right, maybe from right to left. East and West are two different worlds, but in both time doesn't go downwards. Time ascends, time goes upwards...
 >It doesn't flow away, it builds up. Something happens because something else is already there...
 >Every day adds up. Days are like stacked bricks... They can crumble and your life collapses. But you continue to build. Time goes upwards, and life goes on.
 > -- <cite>Miss Kwadrat</cite>
-</details>
+
 
 
 

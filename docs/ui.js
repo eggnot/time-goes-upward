@@ -14,12 +14,21 @@ function openModal(id) {
     if (firstInput) setTimeout(() => firstInput.focus(), 100);
     const hash = "#" + id.replace('-modal', '');
     history.pushState({modalOpen: id}, "", hash);
+    updateToggleBtnVisibility();
 }
 
 function closeModal(id, goBack = true) {
     document.getElementById(id).classList.remove('open');
+    updateToggleBtnVisibility();
     if (lastFocus) lastFocus.focus();
     if (goBack) history.back();
+}
+
+function updateToggleBtnVisibility() {
+    const btn = document.getElementById('toggle-nav-btn');
+    if (!btn) return;
+    const anyOpen = !!document.querySelector('.modal-window.open');
+    btn.classList.toggle('hidden', anyOpen);
 }
 
 function updateSetSelector() {
@@ -94,6 +103,16 @@ function updateModalOpacity(val, save = true) {
     if (save) localStorage.setItem(STORAGE_KEY_MODAL_OPACITY, val);
 }
 
+function updatePastOpacity(val, save = true) {
+    document.documentElement.style.setProperty('--op-p', val);
+    if (save) localStorage.setItem(STORAGE_KEY_OPACITY_PAST, val);
+}
+
+function updateFutureOpacity(val, save = true) {
+    document.documentElement.style.setProperty('--op-f', val);
+    if (save) localStorage.setItem(STORAGE_KEY_OPACITY_FUTURE, val);
+}
+
 function updateThemeColor(varName, value) {
     document.documentElement.style.setProperty(varName, value);
     localStorage.setItem(getSetKey('cfg_' + varName.replace('--', '')), value);
@@ -101,5 +120,32 @@ function updateThemeColor(varName, value) {
         const contrast = getContrastColor(value);
         document.documentElement.style.setProperty('--text-on-content', contrast);
         updateSetSelector();
+    }
+}
+
+function toggleNavBar() {
+    const nav = document.querySelector('nav.modal-header');
+    const btn = document.getElementById('toggle-nav-btn');
+    if (!nav || !btn) return;
+
+    const isHidden = nav.classList.toggle('nav-minimized');
+    const toHide = nav.querySelectorAll('.header-nav, .header-center, .header-right');
+
+    toHide.forEach(el => el.style.display = isHidden ? 'none' : '');
+
+    if (isHidden) {
+        nav.style.background = 'transparent';
+        nav.style.border = 'none';
+        nav.style.boxShadow = 'none';
+        nav.style.position = 'absolute';
+        nav.style.zIndex = '1000';
+        btn.title = 'show navigation';
+    } else {
+        nav.style.background = '';
+        nav.style.border = '';
+        nav.style.boxShadow = '';
+        nav.style.position = '';
+        nav.style.zIndex = '';
+        btn.title = 'hide navigation';
     }
 }
