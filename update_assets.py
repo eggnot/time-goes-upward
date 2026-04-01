@@ -47,7 +47,10 @@ def extract_assets_from_html(html_path):
         if href and not href.startswith('http'):
             assets.add('./' + href)
     
-    
+    # Add manifest explicitly
+    if 'manifest.json' in content:
+        assets.add('./'+ 'manifest.json')
+
     # Add basic assets
     assets.add('./')
     assets.add('./index.html')

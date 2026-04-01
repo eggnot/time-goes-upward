@@ -80,13 +80,14 @@ button:focus-visible { outline: 2px solid var(--accent); }
   .header-right  { grid-area: right; }  
 }
 
-.header-label {
+/* .header-label {
+    width: 100%;
     font-weight: bold;
     font-size: var(--ui-font-size*2);
     min-width: 2rem;
-    display: flex; align-items: center; justify-content: center; white-space: nowrap;
+    display: flex; white-space: nowrap;
     cursor: pointer;
-}
+} */
 
 .search-container {
     position: relative; 
@@ -309,7 +310,7 @@ textarea { flex: 1; border: none; padding: 1rem; resize: none; font-size: var(--
 }
 
 
-.header-nav { display: flex; gap: 0.2rem; margin: 0 auto; }
+.header-nav, .header-label{ display: flex; gap: 0.2rem; margin: 0 auto; font-weight: bolder;}
 
 .color-picker { position: absolute; top: 1rem; right: 1rem; z-index: 10;
     border: none; width: 2rem; height: 2rem; padding: 0;

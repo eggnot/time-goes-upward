@@ -18,6 +18,7 @@ const ASSETS = [
   './js/tgu_dom.js',
   './js/tgu_events.js',
   './main.css',
+  './manifest.json',
 ];
 
 self.addEventListener('install', (event) => {
