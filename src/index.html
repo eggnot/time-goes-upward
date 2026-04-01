@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TimeUpward">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#222222">
+    
+    <link rel="icon" href="favicon.ico" />
+    
+    <link rel="manifest" href="manifest.json">
+
+    <title>Time goes upward</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+</head>
+<body>
+
+<nav class="modal-header">
+    <div class="header-left">
+        <button id="toggle-nav-btn" class="btn-icon" title="hide navigation">👁️</button>
+        <div class="header-nav">
+            <button id="prev-year-btn" class="btn-icon" title="previous year">❮</button>
+            <span id="current-year-display" class="header-label" title="current year"></span>
+            <button id="next-year-btn" class="btn-icon" title="next year">❯</button>
+        </div>
+    </div>
+
+    <div class="header-center">
+        <div class="search-container">
+            <input type="text" id="search-bar" placeholder="search...">
+            <button id="clear-search" class="hidden" title="clear search">✕</button>
+        </div>
+
+    </div>
+    <div class="header-right">
+        <select name="set-selector-main" class="set-selector-ui tgu-set-selector" title="spaces"></select>
+        <button id="reset-zoom-btn" class="btn-icon hidden" title="reset zoom">🎯</button>
+        
+        <button id="open-help-btn" class="btn-icon" title="help">💬</button>
+        <button id="open-settings-btn" class="btn-icon" title="settings">🛠️</button>
+    </div>
+</nav>
+
+<!-- https://jsbench.me/02l63eic9j/1 -->
+<div id="app"></div>
+
+<div id="editor" class="modal-window">
+    <div class="modal-header">
+        <div class="header-left">
+            <button data-action="close-editor" class="btn-icon" title="back">←</button>
+        </div>
+        <div class="header-center">
+            <div class="header-nav">
+                <button data-action="nav-day-prev" class="btn-icon" title="previous day">❮</button>
+                <span id="editor-date-label" class="header-label" title="current day"></span>
+                <button data-action="nav-day-next" class="btn-icon" title="next day">❯</button>
+            </div>
+        </div>
+        <div class="header-right">
+            <select name="set-selector-editor" class="set-selector-ui tgu-set-selector" title="spaces"></select>
+            <button id="editor-settings-btn" class="btn-icon" title="settings">⚙</button>
+            <button data-action="close-editor" class="btn-icon" title="back">✕</button>
+        </div>
+    </div>
+
+    <div class="text-input">
+        <textarea id="diary-text" placeholder="Write here..."></textarea>
+        <input type="color" id="cell-color-picker" class="color-picker" title="circle color">
+    </div>
+
+    <div class="editor-nav-row">
+        <button id="prev-entry-btn" data-action="nav-entry-prev" class="btn-text btn-set" title="previous text"></button>
+        <button id="next-entry-btn" data-action="nav-entry-next" class="btn-text btn-set" title="next text"></button>
+    </div>
+</div>
+
+<div id="help-modal" class="modal-window">
+    <div class="modal-header">
+        <div class="header-left">
+            <button data-close="help-modal" class="btn-icon" title="back">←</button>
+        </div>
+        <div class="header-center">
+            <span class="header-label">Help</span>
+        </div>
+        <div class="header-right">
+            <button data-close="help-modal" class="btn-icon" title="back">✕</button>
+        </div>
+    </div>
+    <div class="modal-body">
+        
+        <h3>Hello 🖖</h3>
+        <p>Let me know what should be here!</p>
+        
+        <p>
+            Project page and source code: 
+            <a href="https://github.com/eggnot/time-goes-upward">github.com/eggnot/time-goes-upward</a>
+        </p>
+        
+        <p>v 0.31</p>
+
+        <p>Aleksey Grishchenko, 2026</p>
+
+    </div>
+</div>
+
+<div id="settings-modal" class="modal-window">
+    <div class="modal-header">
+        <div class="header-left">
+            <button data-close="settings-modal" class="btn-icon" title="back">←</button>
+        </div>
+        <div class="header-center">
+            <span class="header-label">Settings and Tools</span>
+        </div>
+        <div class="header-right">
+            <button data-close="settings-modal" class="btn-icon" title="back">✕</button>
+        </div>
+    </div>
+    <div class="modal-body">
+
+        <div class="settings-group">
+            <h3>Global Appearance</h3>
+            <h4>Grid view</h4>
+            <div class="setting-row">
+                <span>Animate background</span>
+                <input type="checkbox" id="bg-animation-toggle">
+            </div>
+            
+            <div class="setting-row">
+                <span>Enable Zoom/Pan</span>
+                <input type="checkbox" id="cfg-zoom-enabled">
+            </div>
+
+            <div class="setting-row">
+                <span>Past opacity</span>
+                <input type="range" id="cfg-opacity-past" min="0" max="1" step="0.05" value="1">
+            </div>
+            <div class="setting-row">
+                <span>Future opacity</span>
+                <input type="range" id="cfg-opacity-future" min="0" max="1" step="0.05" value="0.9">
+            </div>
+            
+            <h4>Editor + Menus</h4>
+            <div class="setting-row">
+                <span>Font size</span>
+                <input type="range" id="cfg-font-size" min="8" max="42" value="20">
+            </div>
+            <div class="setting-row">
+                <span>Transparency</span>
+                <input type="range" id="cfg-modal-opacity" min="0.75" max="1" step="0.025" value="0.95">
+            </div>
+
+        </div>
+        
+        
+        <div class="settings-group">
+            <h3>Sets</h3>
+            <div class="setting-row">
+                <span>New Set</span>
+                <div class="settings-action-group">
+                    <input type="text" id="new-set-name" placeholder="Name..." maxlength="5">
+                    <button id="add-set-btn" class="btn-text">Add</button>
+                </div>
+            </div>            
+            <div class="settings-group set-aware">
+                <div class="setting-row">
+                    <span>Current</span>
+                <select name="set-selector-settings" class="set-selector-ui tgu-set-selector"></select>
+                    <button id="delete-set-btn" class="btn-text btn-danger">Delete</button>
+                </div>                
+                <div class="setting-row">
+                    <span>Highlight</span>
+                    <input type="color" id="cfg-bg-content">
+                </div>
+                <div class="setting-row">
+                    <span>Match</span>
+                    <input type="color" id="cfg-primary">
+                </div>
+                <div class="setting-row">
+                    <span>Tooltip</span>
+                    <input type="color" id="cfg-bg-tooltip">
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <div class="settings-group">
+            <h3>Data Management</h3>
+            <p>Export to a CSV file or import data from a previous backup.</p>
+            <div class="settings-actions">
+                <button id="export-btn" class="btn-text">Export CSV</button>
+                <button id="import-trigger-btn" class="btn-text">Import CSV</button>
+                <input type="file" id="import-file" class="hidden" accept=".csv">                
+            </div>
+        </div>
+
+        <div class="settings-group">
+            <h3>Debug</h3>
+            <p>Fill couple of random days for the active set (Current Year).</p>
+            <button id="debug-lucky-btn" class="btn-text btn-set">I feel lucky</button>
+        </div>
+
+        <div class="settings-group">
+            <h3>Danger Zone</h3>
+            <p>Permanently delete all data from this device.</p>
+            <button id="danger-wipe-btn" class="btn-text btn-danger">Delete All Data</button>
+        </div>        
+        
+    </div>
+</div>
+
+<div id="tooltip" class="tooltip hidden"></div>
+
+    <script src="js/tgu_dom.js" type="text/javascript"></script>
+    <script src="js/tgu-utils.js" type="text/javascript"></script>
+    <script src="js/tgu-store.js" type="text/javascript"></script>
+    <script src="js/tgu-state.js" type="text/javascript"></script>
+    <script src="js/tgu-ui.js" type="text/javascript"></script>
+    <script src="js/tgu-editor.js" type="text/javascript"></script>
+    <script src="js/tgu-data.js" type="text/javascript"></script>
+    <script src="js/tgu-grid.js" type="text/javascript"></script>
+    <script src="js/tgu-zoom.js" type="text/javascript"></script>
+    <script src="js/tgu_events.js" type="text/javascript"></script>
+    <script src="js/tgu-main.js" type="text/javascript"></script>
+
+    <script src="js/tgu-bootstrap.js" type="text/javascript" defer></script>
+    
+</body>
+</html>

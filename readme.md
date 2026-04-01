@@ -4,7 +4,7 @@ Calendar notes, year at a glance. A stack of months where days are aligned by we
 
 webapp: https://eggnot.github.io/time-goes-upward/
 
-[![tgu](https://eggnot.com/time-goes-upward/images/main-horizontal.png)](https://eggnot.github.io/time-goes-upward/)
+[![tgu](https://github.com/eggnot/time-goes-upward/blob/main/images/main-horizontal.png?raw=true)](https://eggnot.github.io/time-goes-upward/)
 
 
 Why days go upward?
@@ -33,3 +33,7 @@ If you find this useful or nice, please support via PayPal to aleksey.grishchenk
 ### Note
 
 *Most of the code is written by thinking machine and probably trash. I'm an engineer, not a programmer. But let me know how to make app code or architecture better.*
+
+### wtf docs and md's
+
+`docs` folder is just symlink to `src` for github pages to host an app. [ARCHITECTURE.md](ARCHITECTURE.md), [CODING_STANDARDS.md](CODING_STANDARDS.md), etc. are for agents
