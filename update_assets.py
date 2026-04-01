@@ -28,7 +28,7 @@ def extract_assets_from_html(html_path):
     scripts = re.findall(script_pattern, content)
     for script in scripts:
         if not script.startswith('http'):  # Skip external URLs
-            assets.add(script)
+            assets.add('./' + script)
     
     # Extract CSS link references: <link rel="stylesheet" href="...">
     # Match both orders: rel=... href=... or href=... rel=...
@@ -37,7 +37,7 @@ def extract_assets_from_html(html_path):
     for match in css_matches:
         href = match[1] if match[1] else match[2]
         if href and not href.startswith('http'):
-            assets.add(href)
+            assets.add('./' + href)
     
     # Extract favicon: <link rel="icon" href="...">
     icon_pattern = r'<link[^>]*(rel=["\']icon["\'][^>]*href=["\']([^"\']+)["\']|href=["\']([^"\']+)["\'][^>]*rel=["\']icon["\'])'
@@ -45,12 +45,12 @@ def extract_assets_from_html(html_path):
     for match in icon_matches:
         href = match[1] if match[1] else match[2]
         if href and not href.startswith('http'):
-            assets.add(href)
+            assets.add('./' + href)
     
     
     # Add basic assets
     assets.add('./')
-    assets.add('index.html')
+    assets.add('./index.html')
     
     return assets
 
@@ -71,7 +71,7 @@ def extract_icons_from_manifest(manifest_path):
                 if 'src' in icon_obj:
                     src = icon_obj['src']
                     if src and not src.startswith('http'):
-                        icons.add(src)
+                        icons.add('./' + src)
     except json.JSONDecodeError:
         print(f"⚠️  Warning: Could not parse {manifest_path}")
     

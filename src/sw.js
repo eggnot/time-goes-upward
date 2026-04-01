@@ -1,23 +1,23 @@
-const CACHE_NAME = 'tgu-v32';
+const CACHE_NAME = 'tgu-v33';
 
 const ASSETS = [
   './',
-  'favicon-512x512.svg',
-  'favicon.ico',
-  'index.html',
-  'js/tgu-bootstrap.js',
-  'js/tgu-data.js',
-  'js/tgu-editor.js',
-  'js/tgu-grid.js',
-  'js/tgu-main.js',
-  'js/tgu-state.js',
-  'js/tgu-store.js',
-  'js/tgu-ui.js',
-  'js/tgu-utils.js',
-  'js/tgu-zoom.js',
-  'js/tgu_dom.js',
-  'js/tgu_events.js',
-  'main.css',
+  './favicon-512x512.svg',
+  './favicon.ico',
+  './index.html',
+  './js/tgu-bootstrap.js',
+  './js/tgu-data.js',
+  './js/tgu-editor.js',
+  './js/tgu-grid.js',
+  './js/tgu-main.js',
+  './js/tgu-state.js',
+  './js/tgu-store.js',
+  './js/tgu-ui.js',
+  './js/tgu-utils.js',
+  './js/tgu-zoom.js',
+  './js/tgu_dom.js',
+  './js/tgu_events.js',
+  './main.css',
 ];
 
 self.addEventListener('install', (event) => {
