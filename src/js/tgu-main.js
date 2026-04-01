@@ -103,7 +103,7 @@ function tgu_main_applySetSettings() {
         // Update color picker input with current CSS variable value
         // Convert --bg-content → bgContent (camelCase registry key)
         const cssVar = v.replace(/--/g, ''); // 'bg-content'
-        const inputKey = 'cfg' + cssVar.split('-').map((word, i) => i === 0 ? word : word[0].toUpperCase() + word.slice(1)).join('');
+        const inputKey = 'cfg' + cssVar.split('-').map(word => word[0].toUpperCase() + word.slice(1)).join('');
         const input = tgu_dom_get(inputKey);
         if (input) input.value = getComputedStyle(document.documentElement).getPropertyValue(v).trim();
     });

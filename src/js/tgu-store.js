@@ -183,7 +183,7 @@ function tgu_store_clearSetData(setName) {
  * @returns {string[]}
  */
 function tgu_store_getSets() {
-    return JSON.parse(tgu_store_get(tgu_store_KEYS.SETS) || `["${tgu_main_DEFAULT_SET}"]`);
+    return tgu_store_get(tgu_store_KEYS.SETS, [tgu_main_DEFAULT_SET]);
 }
 
 /**

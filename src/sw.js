@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tgu-v2';
+const CACHE_NAME = 'tgu-v32';
 
 const ASSETS = [
   './',
@@ -18,7 +18,6 @@ const ASSETS = [
   'js/tgu_dom.js',
   'js/tgu_events.js',
   'main.css',
-  'manifest.json',
 ];
 
 self.addEventListener('install', (event) => {
@@ -36,6 +35,15 @@ self.addEventListener('fetch', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  // Optional: Clean up old caches here
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
 });
