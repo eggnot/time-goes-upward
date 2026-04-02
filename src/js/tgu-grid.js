@@ -1,34 +1,16 @@
-/**
- * @file tgu-grid.js
- * @description Grid rendering for the calendar view.
- */
-
 // ===== Grid Constants =====
 
-/** Maximum cells per month */
 const tgu_grid_MAX_CELLS = 37;
-
-/** Number of months in a year */
 const tgu_grid_MONTHS = 12;
-
-/** Month names for display */
 const tgu_grid_MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-/** Week day names for display */
 const tgu_grid_WEEK_NAMES = ['S','M','T','W','T','F','S'];
 
 // ===== Grid Functions =====
 
-/**
- * Rebuilds the calendar grid for a given year.
- * @param {HTMLElement} container - The grid container element.
- * @param {number} year - Year to display.
- * @param {string} [searchTerm] - Optional search filter.
- */
 function tgu_grid_rebuild(container, year, searchTerm) {
     const fragment = document.createDocumentFragment();
     container.textContent = '';
-    const yearDisplay = tgu_dom_get('currentYearDisplay');
+    const yearDisplay = document.getElementById('current-year-display');
     if (yearDisplay) yearDisplay.textContent = year;
     
     const now = new Date();
@@ -46,9 +28,27 @@ function tgu_grid_rebuild(container, year, searchTerm) {
         const rGap = tgu_grid_MAX_CELLS - (fOffset + dInMonth);
         
         if (lGap >= rGap && lGap > 0) {
-            tgu_grid_createHeader(tgu_grid_MONTH_NAMES[m], row, row + 1, 1, lGap + 1, false, fragment, 'tgu-month tgu-month-left');
+            tgu_grid_createHeader({
+                text: tgu_grid_MONTH_NAMES[m],
+                rowStart: row,
+                rowEnd: row + 1,
+                colStart: 1,
+                colEnd: lGap + 1,
+                isSpecial: false,
+                target: fragment,
+                className: 'tgu-month tgu-month-left'
+            });
         } else if (rGap > 0) {
-            tgu_grid_createHeader(tgu_grid_MONTH_NAMES[m], row, row + 1, fOffset + dInMonth + 1, tgu_grid_MAX_CELLS + 1, false, fragment, 'tgu-month tgu-month-right');
+            tgu_grid_createHeader({
+                text: tgu_grid_MONTH_NAMES[m],
+                rowStart: row,
+                rowEnd: row + 1,
+                colStart: fOffset + dInMonth + 1,
+                colEnd: tgu_grid_MAX_CELLS + 1,
+                isSpecial: false,
+                target: fragment,
+                className: 'tgu-month tgu-month-right'
+            });
         }
         
         for (let d = 1; d <= dInMonth; d++) {
@@ -89,33 +89,33 @@ function tgu_grid_rebuild(container, year, searchTerm) {
     container.appendChild(fragment);
 }
 
-/**
- * Creates a header cell in the grid.
- * @param {string} txt - Header text.
- * @param {number} rS - Row start.
- * @param {number} rE - Row end.
- * @param {number} cS - Column start.
- * @param {number} cE - Column end.
- * @param {boolean} [isS] - Whether styled specially.
- * @param {HTMLElement} [target] - Target container (defaults to app).
- * @param {string} [cls] - CSS class.
- */
-function tgu_grid_createHeader(txt, rS, rE, cS, cE, isS = false, target = null, cls = 'tgu-header') {
-    const container = target || tgu_dom_get('app') || document.body;
-    const h = document.createElement('div');
-    h.className = cls;
-    if (isS) h.classList.add('s');
-    h.style.gridRowStart = rS;
-    h.style.gridRowEnd = rE;
-    h.style.gridColumnStart = cS;
-    h.style.gridColumnEnd = cE;
+function tgu_grid_createHeader(options) {
+    const {
+        text,
+        rowStart,
+        rowEnd,
+        colStart,
+        colEnd,
+        isSpecial = false,
+        target = null,
+        className = 'tgu-header'
+    } = options;
     
-    if (cls.includes('tgu-month')) {
+    const container = target || document.getElementById('app') || document.body;
+    const h = document.createElement('div');
+    h.className = className;
+    if (isSpecial) h.classList.add('s');
+    h.style.gridRowStart = rowStart;
+    h.style.gridRowEnd = rowEnd;
+    h.style.gridColumnStart = colStart;
+    h.style.gridColumnEnd = colEnd;
+    
+    if (className.includes('tgu-month')) {
         const s = document.createElement('span');
-        s.textContent = String(txt);
+        s.textContent = String(text);
         h.appendChild(s);
     } else {
-        h.textContent = String(txt);
+        h.textContent = String(text);
     }
     
     container.appendChild(h);

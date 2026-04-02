@@ -1,27 +1,18 @@
-/**
- * @file tgu-state.js
- * @description Cell state management and search/tooltip logic.
- */
+// ===== Constants =======
 
-// ===== Constants =====
-
-/** Maximum length for tooltip content display */
+const tgu_state_SEARCH_MIN_LENGTH = 2;
 const tgu_state_TOOLTIP_MAX_LEN = 600;
+const tgu_state_TOOLTIP_OFFSET = 15;
 
 // ===== Functions =====
 
-/**
- * Refreshes the visual classes and dots on the grid based on current data and search.
- * @param {string} [searchTerm] - Current search term.
- * @returns {boolean} Whether any cell matches the current search term.
- */
 function tgu_state_updateCellStates(searchTerm = "") {
     const now = new Date();
     const todayDateKey = tgu_utils_formatDateKey(now.getFullYear(), now.getMonth() + 1, now.getDate());
     const todayStart = new Date().setHours(0, 0, 0, 0);
     let foundAny = false;
 
-    tgu_dom_getAll('.tgu-cell').forEach(el => {
+    document.querySelectorAll('.tgu-cell').forEach(el => {
         const dateKey = el.dataset.date;
         const dateObj = tgu_utils_parseKeyDate(el.dataset.k);
         const entry = tgu_store_getEntry(dateKey);
@@ -39,47 +30,31 @@ function tgu_state_updateCellStates(searchTerm = "") {
     return foundAny;
 }
 
-/**
- * Filters grid cells based on a search query.
- * @param {string} query
- * @returns {string} The processed search term.
- */
 function tgu_state_handleSearch(query) {
     const trimmed = query.trim();
-    const searchTerm = trimmed.length > 2 ? trimmed.toLowerCase() : "";
+    const searchTerm = trimmed.length > tgu_state_SEARCH_MIN_LENGTH ? trimmed.toLowerCase() : "";
     const foundAny = tgu_state_updateCellStates(searchTerm);
-    const clearBtn = tgu_dom_get('clearSearchBtn');
-    const searchBar = tgu_dom_get('searchBar');
+    const clearBtn = document.getElementById('clear-search');
+    const searchBar = document.getElementById('search-bar');
     if (clearBtn) clearBtn.classList.toggle('hidden', query.length === 0);
     if (searchBar) searchBar.classList.toggle('search-found', !!(searchTerm && foundAny));
     return searchTerm;
 }
 
-/**
- * Clears search state and input.
- * @returns {void}
- */
 function tgu_state_clearSearch() {
-    const searchBar = tgu_dom_get('searchBar');
+    const searchBar = document.getElementById('search-bar');
     if (searchBar) {
         searchBar.value = "";
         tgu_state_handleSearch("");
     }
 }
 
-/**
- * Shows the hovering tooltip for a cell.
- * @param {MouseEvent|PointerEvent} e - Mouse/pointer event.
- * @param {string} key - Storage key.
- * @param {string} [searchTerm] - Current search term for highlighting.
- * @returns {void}
- */
 function tgu_state_showTooltip(e, key, searchTerm = "") {
     const dateKey = key.substring(key.indexOf(tgu_store_PREFIX.CONTENT) + tgu_store_PREFIX.CONTENT.length);
     const entry = tgu_store_getEntry(dateKey);
     if (!entry.text) return tgu_state_hideTooltip();
 
-    const tooltip = tgu_dom_get('tooltip');
+    const tooltip = document.getElementById('tooltip');
     if (!tooltip) return;
     let displayContent = entry.text;
     if (displayContent.length > tgu_state_TOOLTIP_MAX_LEN) {
@@ -98,18 +73,15 @@ function tgu_state_showTooltip(e, key, searchTerm = "") {
     tgu_state_moveTooltip(e);
 }
 
-/**
- * Positions the tooltip relative to the cursor.
- * @param {MouseEvent|PointerEvent} e - Mouse/pointer event.
- * @returns {void}
- */
 function tgu_state_moveTooltip(e) {
-    const tooltip = tgu_dom_get('tooltip');
+    const tooltip = document.getElementById('tooltip');
     if (!tooltip) return;
-    const offset = 15;
+    
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-
+    const offset = tgu_state_TOOLTIP_OFFSET;
+    
+    // Horizontal positioning
     if (e.clientX > vw / 2) {
         tooltip.style.left = 'auto';
         tooltip.style.right = (vw - e.clientX + offset) + 'px';
@@ -117,7 +89,8 @@ function tgu_state_moveTooltip(e) {
         tooltip.style.right = 'auto';
         tooltip.style.left = (e.clientX + offset) + 'px';
     }
-
+    
+    // Vertical positioning
     if (e.clientY > vh / 2) {
         tooltip.style.top = 'auto';
         tooltip.style.bottom = (vh - e.clientY + offset) + 'px';
@@ -127,11 +100,7 @@ function tgu_state_moveTooltip(e) {
     }
 }
 
-/**
- * Hides the tooltip.
- * @returns {void}
- */
 function tgu_state_hideTooltip() {
-    const tooltip = tgu_dom_get('tooltip');
+    const tooltip = document.getElementById('tooltip');
     if (tooltip) tooltip.classList.add('hidden');
 }

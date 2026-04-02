@@ -1,11 +1,3 @@
-/**
- * @file tgu-data.js
- * @description CSV export/import and data management operations.
- */
-
-/**
- * Generates and triggers download for the diary data in CSV format.
- */
 function tgu_data_exportCSV() {
     let csv = "Set,Date,Color,Content\n";
     const entries = tgu_store_getAllDataForExport();
@@ -21,13 +13,9 @@ function tgu_data_exportCSV() {
     a.href = url;
     a.download = `time_goes_upward_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 100);
+    setTimeout(() => URL.revokeObjectURL(url), tgu_main_FOCUS_DELAY_MS);
 }
 
-/**
- * Triggers file reading and data import.
- * @param {HTMLInputElement} input
- */
 function tgu_data_importCSV(input) {
     const file = input.files[0];
     if (!file) return;
@@ -61,22 +49,15 @@ function tgu_data_importCSV(input) {
     reader.readAsText(file);
 }
 
-/**
- * Wipes all local data.
- */
 function tgu_data_clearAllData() {
     if (confirm("Are you sure you want to delete ALL your diary entries, colors, and sets? This cannot be undone.")) {
-        tgu_store_clearAllLocalStorage();
+        tgu_store_clearLocalStorage();
         location.reload();
     }
 }
 
-/**
- * Populates debug data for the current year.
- * @returns {void}
- */
 function tgu_data_fillRandomData() {
-    const yearDisplay = tgu_dom_get('currentYearDisplay');
+    const yearDisplay = document.getElementById('current-year-display');
     if (!yearDisplay) return;
     const curYear = parseInt(yearDisplay.textContent);
     tgu_store_fillRandomData(curYear);

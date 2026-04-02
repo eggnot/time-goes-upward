@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tgu-v33';
+const CACHE_NAME = 'tgu-v34';
 
 const ASSETS = [
   '/time-goes-upward/',

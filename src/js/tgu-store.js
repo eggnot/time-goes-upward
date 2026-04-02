@@ -1,18 +1,5 @@
-/**
- * @file tgu-store.js
- * @description Data persistence layer with localStorage operations and entry management.
- * Consolidated from separate storage/store modules for simplicity.
- */
-
 // ===== localStorage Operations =====
 
-/**
- * Retrieves a value from localStorage with auto-conversion.
- * @param {string} key
- * @param {*} defaultValue
- * @returns {*}
- * @private
- */
 function tgu_store_get(key, defaultValue = null) {
     const value = localStorage.getItem(key);
     if (value === null) return defaultValue;
@@ -23,48 +10,24 @@ function tgu_store_get(key, defaultValue = null) {
     try { return JSON.parse(value); } catch { return value; }
 }
 
-/**
- * Saves a value to localStorage.
- * @param {string} key
- * @param {*} value
- * @private
- */
 function tgu_store_set(key, value) {
     localStorage.setItem(key, String(value));
 }
 
-/**
- * Removes a key from localStorage.
- * @param {string} key
- * @private
- */
 function tgu_store_remove(key) {
     localStorage.removeItem(key);
 }
 
-/**
- * Retrieves all keys matching a prefix.
- * @param {string} prefix
- * @returns {string[]}
- * @private
- */
 function tgu_store_getKeysWithPrefix(prefix) {
     return Object.keys(localStorage).filter(k => k.startsWith(prefix));
 }
 
-/**
- * Clears all localStorage.
- * @private
- */
 function tgu_store_clearLocalStorage() {
     localStorage.clear();
 }
 
 // ===== Storage Constants =====
 
-/**
- * Storage key prefix patterns for organizing keys
- */
 const tgu_store_PREFIX = {
     CONTENT: 'D_',
     COLOR: 'C_',
@@ -72,9 +35,6 @@ const tgu_store_PREFIX = {
     SEP: ':'
 };
 
-/**
- * localStorage key names for global and set-specific settings
- */
 const tgu_store_KEYS = {
     SETS: 'tgu_sets',
     CURRENT_SET: 'tgu_current_set',
@@ -88,19 +48,6 @@ const tgu_store_KEYS = {
 
 // ===== Data Management Functions =====
 
-/**
- * @typedef {Object} DayData
- * @property {string} text - Diary content
- * @property {string} color - Hex color for the dot (e.g., "#RRGGBB")
- */
-
-/**
- * Generates a namespaced storage key for a specific date and type within the current set.
- * @private
- * @param {string} dateKey - Date in YYYY-MM-DD format.
- * @param {'CONTENT'|'COLOR'} type - Type of data (content or color).
- * @returns {string} The full localStorage key.
- */
 function tgu_store_getPrefixedKey(dateKey, type) {
     const currentSet = tgu_store_getCurrentSet();
     const setPrefix = currentSet === tgu_main_DEFAULT_SET 
@@ -110,23 +57,11 @@ function tgu_store_getPrefixedKey(dateKey, type) {
     return `${setPrefix}${typePrefix}${dateKey}`;
 }
 
-/**
- * Generates a namespaced storage key for a set-specific setting.
- * @private
- * @param {string} settingName - Name of the setting (e.g., 'cfg_bg-content').
- * @returns {string} The full localStorage key.
- */
 function tgu_store_getSetSettingKey(settingName) {
     const currentSet = tgu_store_getCurrentSet();
     return `${tgu_store_PREFIX.SET}${currentSet}${tgu_store_PREFIX.SEP}${settingName}`;
 }
 
-/**
- * Retrieves unified data (text and color) for a specific date.
- * Returns empty values if data is corrupted or missing.
- * @param {string} dateKey - Date in YYYY-MM-DD format.
- * @returns {DayData} An object containing text and color.
- */
 function tgu_store_getEntry(dateKey) {
     return {
         text: tgu_store_get(tgu_store_getPrefixedKey(dateKey, 'CONTENT')) || "",
@@ -134,13 +69,6 @@ function tgu_store_getEntry(dateKey) {
     };
 }
 
-/**
- * Saves specific fields for a date. Only provided fields will be updated.
- * If a field's value is empty/undefined, it will be removed from storage.
- * @param {string} dateKey - Date in YYYY-MM-DD format.
- * @param {Partial<DayData>} data - Object with `text` and/or `color` properties to save.
- * @returns {void}
- */
 function tgu_store_saveEntry(dateKey, data) {
     if (data.text !== undefined) {
         const key = tgu_store_getPrefixedKey(dateKey, 'CONTENT');
@@ -154,10 +82,6 @@ function tgu_store_saveEntry(dateKey, data) {
     }
 }
 
-/**
- * Gets all date keys (YYYY-MM-DD) for the current set that have content.
- * @returns {string[]} An array of date keys, sorted chronologically.
- */
 function tgu_store_getExistingDateKeys() {
     const currentSet = tgu_store_getCurrentSet();
     const prefix = currentSet === tgu_main_DEFAULT_SET 
@@ -168,125 +92,50 @@ function tgu_store_getExistingDateKeys() {
         .sort();
 }
 
-/**
- * Clears all data associated with a specific set.
- * @param {string} setName - The name of the set to clear.
- * @returns {void}
- */
 function tgu_store_clearSetData(setName) {
     const prefix = `${tgu_store_PREFIX.SET}${setName}${tgu_store_PREFIX.SEP}`;
     tgu_store_getKeysWithPrefix(prefix).forEach(k => tgu_store_remove(k));
 }
 
-/**
- * Gets all sets defined in the app.
- * @returns {string[]}
- */
 function tgu_store_getSets() {
     return tgu_store_get(tgu_store_KEYS.SETS, [tgu_main_DEFAULT_SET]);
 }
 
-/**
- * Saves the list of defined sets.
- * @param {string[]} setsArray
- * @returns {void}
- */
 function tgu_store_saveSets(setsArray) {
     tgu_store_set(tgu_store_KEYS.SETS, JSON.stringify(setsArray));
 }
 
-/**
- * Gets the currently active set.
- * @returns {string}
- */
 function tgu_store_getCurrentSet() {
     return tgu_store_get(tgu_store_KEYS.CURRENT_SET) || tgu_main_DEFAULT_SET;
 }
 
-/**
- * Sets the currently active set.
- * @param {string} setName
- * @returns {void}
- */
 function tgu_store_setCurrentSet(setName) {
     console.log(`[tgu_store] setCurrentSet: "${setName}"`);
     tgu_store_set(tgu_store_KEYS.CURRENT_SET, setName);
 }
 
-/**
- * Gets a global (app-wide) setting.
- * Returns default if data is corrupted or missing.
- * @param {string} key
- * @param {*} defaultValue
- * @returns {*}
- */
 function tgu_store_getGlobalSetting(key, defaultValue) {
-    try {
-        return tgu_store_get(key, defaultValue);
-    } catch (e) {
-        console.warn(`[tgu_store] Corrupt global setting "${key}", using default`);
-        return defaultValue;
-    }
+    return tgu_store_get(key, defaultValue);
 }
 
-/**
- * Saves a global (app-wide) setting.
- * @param {string} key
- * @param {*} value
- * @returns {void}
- */
 function tgu_store_saveGlobalSetting(key, value) {
     tgu_store_set(key, String(value));
 }
 
-/**
- * Gets a set-specific setting.
- * Returns null if data is corrupted or missing.
- * @param {string} settingName
- * @returns {string|null}
- */
 function tgu_store_getSetSetting(settingName) {
-    try {
-        const value = tgu_store_get(tgu_store_getSetSettingKey(settingName));
-        return value || null;
-    } catch (e) {
-        console.warn(`[tgu_store] Corrupt set setting "${settingName}"`);
-        return null;
-    }
+    return tgu_store_get(tgu_store_getSetSettingKey(settingName)) || null;
 }
 
-/**
- * Saves a set-specific setting.
- * @param {string} settingName
- * @param {*} value
- * @returns {void}
- */
 function tgu_store_saveSetSetting(settingName, value) {
     tgu_store_set(tgu_store_getSetSettingKey(settingName), value);
 }
 
-/**
- * Removes a set-specific setting.
- * @param {string} settingName
- * @returns {void}
- */
 function tgu_store_removeSetSetting(settingName) {
     tgu_store_remove(tgu_store_getSetSettingKey(settingName));
 }
 
-/**
- * Clears all localStorage.
- * @returns {void}
- */
-function tgu_store_clearAllLocalStorage() {
-    tgu_store_clearLocalStorage();
-}
 
-/**
- * Validates localStorage format and detects corrupted/outdated keys.
- * Logs warnings for unexpected data without removing it (graceful degradation).
- * @returns {Object} Summary with {isClean: boolean, orphanedKeys: string[], issueCount: number}
- */
+
 function tgu_store_validateStorageFormat() {
     const orphaned = [];
     const validPatterns = [
@@ -319,10 +168,6 @@ function tgu_store_validateStorageFormat() {
     return summary;
 }
 
-/**
- * Fills random diary data for testing/demo.
- * @param {number} [year] - Year to fill; defaults to current year.
- */
 function tgu_store_fillRandomData(year = new Date().getFullYear()) {
     console.log(`[tgu_store] fillRandomData for year: ${year}, set: "${tgu_store_getCurrentSet()}"`);
     const lorem = "you are beautiful beast and i love you".split(' ');
@@ -335,10 +180,6 @@ function tgu_store_fillRandomData(year = new Date().getFullYear()) {
     }
 }
 
-/**
- * Gets all entries across all sets for export.
- * @returns {Array<{set: string, date: string, color: string, content: string}>}
- */
 function tgu_store_getAllDataForExport() {
     const entries = [];
     tgu_store_getKeysWithPrefix(tgu_store_PREFIX.CONTENT).forEach(k => {
@@ -351,10 +192,6 @@ function tgu_store_getAllDataForExport() {
     return entries;
 }
 
-/**
- * Imports diary entries.
- * @param {Array<{set: string, date: string, color: string, content: string}>} data
- */
 function tgu_store_importData(data) {
     let allSets = tgu_store_getSets();
     data.forEach(e => {
