@@ -32,8 +32,8 @@ If you find this useful or nice, please support via PayPal to aleksey.grishchenk
 
 ### Note
 
-*Most of the code is written by thinking machine and probably trash. I'm an engineer, not a programmer. But let me know how to make app code or architecture better.*
+*Most of the code is written by thinking machine and probably trash. I'm an engineer, not a programmer. Also, it's an experiment for me to try different appoaches and paradigms. Let me know what would be best.*
 
 ### wtf docs and md's
 
-`docs` folder is just symlink to `src` for github pages to host an app. [ARCHITECTURE.md](ARCHITECTURE.md), [CODING_STANDARDS.md](CODING_STANDARDS.md), etc. are for agents
+`docs` folder is just symlink to `src` for github pages to host an app. [CODING_STANDARDS.md](CODING_STANDARDS.md), etc. are for agents and propably temporary.
