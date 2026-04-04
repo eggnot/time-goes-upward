@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tgu-v35';
+const CACHE_NAME = 'tgu-v36';
 
 const ASSETS = [
   './',
@@ -13,11 +13,10 @@ const ASSETS = [
   './js/tgu-ui.js',
   './js/tgu-utils.js',
   './js/tgu-zoom.js',
-  './js/tgu_dom.js',
   './js/tgu_events.js',
   './main.css',
   './manifest.json',
-  './favicon-512x512.svg',
+  './favicon-144x144.png',
   './favicon.ico'
 ];
 

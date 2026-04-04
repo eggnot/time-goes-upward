@@ -21,6 +21,9 @@ function tgu_main_init() {
     // Render the calendar grid
     tgu_main_renderGrid();
 
+    // Ensure Today is visible and comfortable on screen
+    requestAnimationFrame(() => tgu_zoom_resetZoom(false));
+
     // Bind all event listeners (centralized in tgu_events.js)
     tgu_events_bindAll();
 
@@ -56,7 +59,7 @@ function tgu_main_handleGlobalKey(e) {
 }
 
 function tgu_main_applyGlobalSettings() {
-    tgu_ui_toggleAnimation(tgu_store_getGlobalSetting(tgu_store_KEYS.BG_ANIM, false));
+    tgu_ui_toggleAnimation(tgu_store_getGlobalSetting(tgu_store_KEYS.BG_ANIM, true));
     tgu_ui_updateFontSize(tgu_store_getGlobalSetting(tgu_store_KEYS.FONT_SIZE, 16));
     tgu_ui_updateModalOpacity(tgu_store_getGlobalSetting(tgu_store_KEYS.MODAL_OPACITY, 1));
     tgu_ui_updatePastOpacity(tgu_store_getGlobalSetting(tgu_store_KEYS.OPACITY_PAST, 1));

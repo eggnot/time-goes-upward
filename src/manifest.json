@@ -3,8 +3,9 @@
   "short_name": "TimeUpward",
   "start_url": "./",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#222222",
-  "theme_color": "#222222",
+  "theme_color": "#d0ff8a",
   "description": "A visual yearly diary for tracking your life on a grid.",
   "icons": [
     {
@@ -14,9 +15,25 @@
     },
 
     {
-      "src": "./favicon-512x512.svg",
-      "sizes": "512x512",
-      "type": "image/svg"
+      "src": "./favicon-144x144.png",
+      "sizes": "144x144",
+      "purpose": "any",
+      "type": "image/png"
     }
-  ]
+  ],
+
+  "screenshots": [
+    {
+      "src": "screenshots/horizontal.png",
+      "sizes": "1024x512",
+      "form_factor": "wide",
+      "label": "Desktop view showing TGU calendar"
+    },
+    {
+      "src": "screenshots/vertical.png",
+      "sizes": "390x844",
+      "form_factor": "narrow",
+      "label": "Mobile view showing TGU calendar"
+    }
+  ]  
 }

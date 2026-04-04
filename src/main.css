@@ -140,7 +140,7 @@ button:focus-visible { outline: 2px solid var(--accent); }
     .header-label .short-date { display: inline; }
 }
 
-@media (max-width: 320px) {
+@media (max-width: 370px) {
     .modal-header .set-selector-ui { display: none; }
 }
 
@@ -198,7 +198,7 @@ button:focus-visible { outline: 2px solid var(--accent); }
     align-items: center;
     justify-content: space-between;
     background-color: var(--bg-light);
-    font-size: clamp(5pt, 2vmin, 20pt);
+    font-size: clamp(8pt, 2vmin, 20pt);
 }
 
 .tgu-header.s { background-color: #644444; }

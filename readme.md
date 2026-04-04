@@ -4,7 +4,7 @@ Calendar notes, year at a glance. A stack of months where days are aligned by we
 
 webapp: https://eggnot.github.io/time-goes-upward/
 
-[![tgu](https://github.com/eggnot/time-goes-upward/blob/main/images/main-horizontal.png?raw=true)](https://eggnot.github.io/time-goes-upward/)
+[![tgu](https://eggnot.github.io/time-goes-upward/screenshots/horizontal.png)](https://eggnot.github.io/time-goes-upward/)
 
 
 Why days go upward?
