@@ -56,10 +56,3 @@ function tgu_data_clearAllData() {
     }
 }
 
-function tgu_data_fillRandomData() {
-    const yearDisplay = document.getElementById('current-year-display');
-    if (!yearDisplay) return;
-    const curYear = parseInt(yearDisplay.textContent);
-    tgu_store_fillRandomData(curYear);
-    tgu_main_renderGrid();
-}

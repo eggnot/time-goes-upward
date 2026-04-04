@@ -8,7 +8,13 @@
   "description": "A visual yearly diary for tracking your life on a grid.",
   "icons": [
     {
-      "src": "favicon-512x512.svg",
+      "src": "./favicon.ico",
+      "sizes": "32x32",
+      "type": "image/vnd.microsoft.icon"
+    },
+
+    {
+      "src": "./favicon-512x512.svg",
       "sizes": "512x512",
       "type": "image/svg"
     }

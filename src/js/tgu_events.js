@@ -46,7 +46,6 @@ function tgu_events_bindDataEvents() {
     document.getElementById('export-btn')?.addEventListener('click', () => tgu_data_exportCSV());
     document.getElementById('import-trigger-btn')?.addEventListener('click', () => document.getElementById('import-file')?.click());
     document.getElementById('import-file')?.addEventListener('change', (e) => tgu_data_importCSV(e.target));
-    document.getElementById('debug-lucky-btn')?.addEventListener('click', () => tgu_data_fillRandomData());
     document.getElementById('danger-wipe-btn')?.addEventListener('click', () => tgu_data_clearAllData());
 }
 

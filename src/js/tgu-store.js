@@ -168,17 +168,6 @@ function tgu_store_validateStorageFormat() {
     return summary;
 }
 
-function tgu_store_fillRandomData(year = new Date().getFullYear()) {
-    console.log(`[tgu_store] fillRandomData for year: ${year}, set: "${tgu_store_getCurrentSet()}"`);
-    const lorem = "you are beautiful beast and i love you".split(' ');
-    for (let i = 0; i < 5; i++) {
-        const m = Math.floor(Math.random() * 12) + 1;
-        const d = Math.floor(Math.random() * 28) + 1;
-        const txt = Array.from({length: 10}, () => lorem[Math.floor(Math.random() * lorem.length)]).join(' ');
-        const dateKey = tgu_utils_formatDateKey(year, m, d);
-        tgu_store_saveEntry(dateKey, { text: txt });
-    }
-}
 
 function tgu_store_getAllDataForExport() {
     const entries = [];
