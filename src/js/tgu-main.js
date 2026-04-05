@@ -7,12 +7,6 @@ const tgu_main_FOCUS_DELAY_MS = 100;
 // ===== Initialization & Setup =====
 
 function tgu_main_init() {
-    // Validate localStorage format (detect corrupted/old data from previous versions)
-    const storageStatus = tgu_store_validateStorageFormat();
-    if (!storageStatus.isClean) {
-        console.log(`[tgu_main] Storage validation: ${storageStatus.issueCount} corrupted keys will be ignored`);
-    }
-
     // Apply user settings to UI
     tgu_main_applyGlobalSettings();
     tgu_main_applySetSettings();

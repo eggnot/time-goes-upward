@@ -1,194 +1,93 @@
-// ===== localStorage Operations =====
-
-function tgu_store_get(key, defaultValue = null) {
-    const value = localStorage.getItem(key);
-    if (value === null) return defaultValue;
-    // Auto-convert JSON, booleans, numbers
-    if (value === 'true') return true;
-    if (value === 'false') return false;
-    if (!isNaN(Number(value))) return Number(value);
-    try { return JSON.parse(value); } catch { return value; }
-}
-
-function tgu_store_set(key, value) {
-    localStorage.setItem(key, String(value));
-}
-
-function tgu_store_remove(key) {
-    localStorage.removeItem(key);
-}
-
-function tgu_store_getKeysWithPrefix(prefix) {
-    return Object.keys(localStorage).filter(k => k.startsWith(prefix));
-}
-
-function tgu_store_clearLocalStorage() {
-    localStorage.clear();
-}
-
 // ===== Storage Constants =====
 
-const tgu_store_PREFIX = {
-    CONTENT: 'D_',
-    COLOR: 'C_',
-    SET: 'SET:',
-    SEP: ':'
+const tgu_store_TYPE = {
+    TXT: 'TXT',
+    COL: 'COL'
 };
 
 const tgu_store_KEYS = {
-    SETS: 'tgu_sets',
-    CURRENT_SET: 'tgu_current_set',
-    BG_ANIM: 'tgu_global_bg_anim',
-    FONT_SIZE: 'tgu_global_font_size',
-    MODAL_OPACITY: 'tgu_global_modal_opacity',
-    OPACITY_PAST: 'tgu_global_opacity_past',
-    OPACITY_FUTURE: 'tgu_global_opacity_future',
-    ZOOM_ENABLED: 'tgu_global_zoom_enabled'
+    SETS: 'cfg:sets',
+    CUR_SET: 'cfg:cur_set',
+    BG_ANIM: 'cfg:bg_anim',
+    FONT_SIZE: 'cfg:font_size',
+    MODAL_OPACITY: 'cfg:m_op',
+    OPACITY_PAST: 'cfg:p_op',
+    OPACITY_FUTURE: 'cfg:f_op',
+    ZOOM_ENABLED: 'cfg:zoom'
 };
 
 // ===== Data Management Functions =====
 
-function tgu_store_getPrefixedKey(dateKey, type) {
-    const currentSet = tgu_store_getCurrentSet();
-    const setPrefix = currentSet === tgu_main_DEFAULT_SET 
-        ? '' 
-        : `${tgu_store_PREFIX.SET}${currentSet}${tgu_store_PREFIX.SEP}`;
-    const typePrefix = tgu_store_PREFIX[type];
-    return `${setPrefix}${typePrefix}${dateKey}`;
-}
+/** @description Gets value for date, type, and optional set */
+const tgu_store_get = (date, type, set = tgu_store_getCurrentSet()) => 
+    localStorage.getItem(`${date}:${type}:${set}`) || "";
 
-function tgu_store_getSetSettingKey(settingName) {
-    const currentSet = tgu_store_getCurrentSet();
-    return `${tgu_store_PREFIX.SET}${currentSet}${tgu_store_PREFIX.SEP}${settingName}`;
-}
-
-function tgu_store_getEntry(dateKey) {
-    return {
-        text: tgu_store_get(tgu_store_getPrefixedKey(dateKey, 'CONTENT')) || "",
-        color: tgu_store_get(tgu_store_getPrefixedKey(dateKey, 'COLOR')) || ""
-    };
-}
-
-function tgu_store_saveEntry(dateKey, data) {
-    if (data.text !== undefined) {
-        const key = tgu_store_getPrefixedKey(dateKey, 'CONTENT');
-        if (data.text.trim()) tgu_store_set(key, data.text.trim());
-        else tgu_store_remove(key);
+/** @description Sets value for date, type, and optional set. Removes key if val is empty. */
+const tgu_store_set = (date, type, val, set = tgu_store_getCurrentSet()) => {
+    const key = `${date}:${type}:${set}`;
+    const cleanVal = val?.trim();
+    
+    if (!cleanVal || (type === tgu_store_TYPE.COL && tgu_utils_isColorNearWhite(cleanVal))) {
+        localStorage.removeItem(key);
+        return;
     }
-    if (data.color !== undefined) {
-        const key = tgu_store_getPrefixedKey(dateKey, 'COLOR');
-        if (data.color && !tgu_utils_isColorNearWhite(data.color)) tgu_store_set(key, data.color);
-        else tgu_store_remove(key);
-    }
-}
+    
+    localStorage.setItem(key, cleanVal);
+};
 
-function tgu_store_getExistingDateKeys() {
-    const currentSet = tgu_store_getCurrentSet();
-    const prefix = currentSet === tgu_main_DEFAULT_SET 
-        ? tgu_store_PREFIX.CONTENT 
-        : `${tgu_store_PREFIX.SET}${currentSet}${tgu_store_PREFIX.SEP}${tgu_store_PREFIX.CONTENT}`;
-    return tgu_store_getKeysWithPrefix(prefix)
-        .map(k => k.substring(prefix.length)) // Extract YYYY-MM-DD part
+/** @description Returns array of all YYYY-MM-DD keys for the current set */
+const tgu_store_getExistingDateKeys = () => {
+    const s = tgu_store_getCurrentSet();
+    return Object.keys(localStorage)
+        .filter(k => k.endsWith(`:${tgu_store_TYPE.TXT}:${s}`))
+        .map(k => k.split(':')[0])
         .sort();
-}
+};
 
-function tgu_store_clearSetData(setName) {
-    const prefix = `${tgu_store_PREFIX.SET}${setName}${tgu_store_PREFIX.SEP}`;
-    tgu_store_getKeysWithPrefix(prefix).forEach(k => tgu_store_remove(k));
-}
-
-function tgu_store_getSets() {
-    return tgu_store_get(tgu_store_KEYS.SETS, [tgu_main_DEFAULT_SET]);
-}
-
-function tgu_store_saveSets(setsArray) {
-    tgu_store_set(tgu_store_KEYS.SETS, JSON.stringify(setsArray));
-}
-
-function tgu_store_getCurrentSet() {
-    return tgu_store_get(tgu_store_KEYS.CURRENT_SET) || tgu_main_DEFAULT_SET;
-}
-
-function tgu_store_setCurrentSet(setName) {
-    console.log(`[tgu_store] setCurrentSet: "${setName}"`);
-    tgu_store_set(tgu_store_KEYS.CURRENT_SET, setName);
-}
-
-function tgu_store_getGlobalSetting(key, defaultValue) {
-    return tgu_store_get(key, defaultValue);
-}
-
-function tgu_store_saveGlobalSetting(key, value) {
-    tgu_store_set(key, String(value));
-}
-
-function tgu_store_getSetSetting(settingName) {
-    return tgu_store_get(tgu_store_getSetSettingKey(settingName)) || null;
-}
-
-function tgu_store_saveSetSetting(settingName, value) {
-    tgu_store_set(tgu_store_getSetSettingKey(settingName), value);
-}
-
-function tgu_store_removeSetSetting(settingName) {
-    tgu_store_remove(tgu_store_getSetSettingKey(settingName));
-}
-
-
-
-function tgu_store_validateStorageFormat() {
-    const orphaned = [];
-    const validPatterns = [
-        /^D_\d{4}-\d{2}-\d{2}$/,           // Data: D_YYYY-MM-DD
-        /^C_\d{4}-\d{2}-\d{2}$/,           // Color: C_YYYY-MM-DD
-        /^SET:[^:]+:D_\d{4}-\d{2}-\d{2}$/, // Set data: SET:name:D_YYYY-MM-DD
-        /^SET:[^:]+:C_\d{4}-\d{2}-\d{2}$/, // Set color: SET:name:C_YYYY-MM-DD
-        /^SET:[^:]+:.+$/,                  // Set settings: SET:name:anything
-        /^tgu_/                            // App settings: tgu_*
-    ];
-
-    Object.keys(localStorage).forEach(key => {
-        const isValid = validPatterns.some(p => p.test(key));
-        if (!isValid) {
-            orphaned.push(key);
-            console.warn(`[tgu_store] Orphaned/corrupted key detected: "${key}"`);
+/** @description Deletes all entry data and settings for a specific set */
+const tgu_store_clearSetData = (setName) => {
+    Object.keys(localStorage).forEach(k => {
+        if (k.endsWith(`:${setName}`) || k.startsWith(`set:${setName}:`)) {
+            localStorage.removeItem(k);
         }
     });
+};
 
-    const summary = {
-        isClean: orphaned.length === 0,
-        orphanedKeys: orphaned,
-        issueCount: orphaned.length
-    };
+/** @description Returns list of all defined sets */
+const tgu_store_getSets = () => JSON.parse(localStorage.getItem(tgu_store_KEYS.SETS)) || [tgu_main_DEFAULT_SET];
 
-    if (!summary.isClean) {
-        console.warn(`[tgu_store] Found ${orphaned.length} corrupted/outdated keys. Data will be ignored.`);
-    }
+/** @description Saves the list of set names */
+const tgu_store_saveSets = (sets) => localStorage.setItem(tgu_store_KEYS.SETS, JSON.stringify(sets));
 
-    return summary;
-}
+/** @description Returns the name of the currently active set */
+const tgu_store_getCurrentSet = () => localStorage.getItem(tgu_store_KEYS.CUR_SET) || tgu_main_DEFAULT_SET;
 
+/** @description Switches the active set */
+const tgu_store_setCurrentSet = (s) => localStorage.setItem(tgu_store_KEYS.CUR_SET, s);
 
-function tgu_store_getAllDataForExport() {
-    const entries = [];
-    tgu_store_getKeysWithPrefix(tgu_store_PREFIX.CONTENT).forEach(k => {
-        const parts = k.split(tgu_store_PREFIX.SEP);
-        const dateKey = parts[parts.length - 1].substring(2);
-        const set = k.startsWith(tgu_store_PREFIX.SET) ? parts[1] : tgu_main_DEFAULT_SET;
-        const entry = tgu_store_getEntry(dateKey);
-        entries.push({ set, date: dateKey, color: entry.color, content: entry.text });
-    });
-    return entries;
-}
+/** @description Retrieves a global app setting with type casting */
+const tgu_store_getGlobalSetting = (key, def) => {
+    const val = localStorage.getItem(key);
+    if (val === null) return def;
+    if (val === 'true') return true;
+    if (val === 'false') return false;
+    return isNaN(val) ? val : Number(val);
+};
 
-function tgu_store_importData(data) {
-    let allSets = tgu_store_getSets();
-    data.forEach(e => {
-        if (!allSets.includes(e.set)) allSets.push(e.set);
-        const currentSetBackup = tgu_store_getCurrentSet();
-        tgu_store_setCurrentSet(e.set);
-        tgu_store_saveEntry(e.date, { text: e.content, color: e.color });
-        tgu_store_setCurrentSet(currentSetBackup);
-    });
-    tgu_store_saveSets(allSets);
-}
+/** @description Saves a global app setting */
+const tgu_store_saveGlobalSetting = (key, val) => localStorage.setItem(key, String(val));
+
+/** @description Gets a setting specific to the current set */
+const tgu_store_getSetSetting = (key) => {
+    const s = tgu_store_getCurrentSet();
+    return localStorage.getItem(`set:${s}:${key}`);
+};
+
+/** @description Saves a setting specific to the current set */
+const tgu_store_saveSetSetting = (key, val) => {
+    const s = tgu_store_getCurrentSet();
+    localStorage.setItem(`set:${s}:${key}`, val);
+};
+
+/** @description Wipes everything */
+const tgu_store_clearAll = () => localStorage.clear();

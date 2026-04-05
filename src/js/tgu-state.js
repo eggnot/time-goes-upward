@@ -14,17 +14,18 @@ function tgu_state_updateCellStates(searchTerm = "") {
 
     document.querySelectorAll('.tgu-cell').forEach(el => {
         const dateKey = el.dataset.date;
-        const dateObj = tgu_utils_parseKeyDate(el.dataset.k);
-        const entry = tgu_store_getEntry(dateKey);
+        const dateObj = tgu_utils_parseKeyDate(dateKey);
+        const txt = tgu_store_get(dateKey, tgu_store_TYPE.TXT);
+        const col = tgu_store_get(dateKey, tgu_store_TYPE.COL);
 
-        el.classList.toggle('hc', !!entry.text);
+        el.classList.toggle('hc', !!txt);
         el.classList.toggle('tdy', dateKey === todayDateKey);
         el.classList.toggle('tgu-past', dateObj < todayStart);
 
-        const isMatch = searchTerm && entry.text.toLowerCase().includes(searchTerm);
+        const isMatch = searchTerm && txt.toLowerCase().includes(searchTerm);
         el.classList.toggle('sm', !!isMatch);
         if (isMatch) foundAny = true;
-        if (entry.color) el.style.setProperty('--dot', entry.color);
+        if (col) el.style.setProperty('--dot', col);
         else el.style.removeProperty('--dot');
     });
     return foundAny;
@@ -49,14 +50,13 @@ function tgu_state_clearSearch() {
     }
 }
 
-function tgu_state_showTooltip(e, key, searchTerm = "") {
-    const dateKey = key.substring(key.indexOf(tgu_store_PREFIX.CONTENT) + tgu_store_PREFIX.CONTENT.length);
-    const entry = tgu_store_getEntry(dateKey);
-    if (!entry.text) return tgu_state_hideTooltip();
+function tgu_state_showTooltip(e, dateKey, searchTerm = "") {
+    const txt = tgu_store_get(dateKey, tgu_store_TYPE.TXT);
+    if (!txt) return tgu_state_hideTooltip();
 
     const tooltip = document.getElementById('tooltip');
     if (!tooltip) return;
-    let displayContent = entry.text;
+    let displayContent = txt;
     if (displayContent.length > tgu_state_TOOLTIP_MAX_LEN) {
         displayContent = displayContent.substring(0, tgu_state_TOOLTIP_MAX_LEN) + '...';
     }

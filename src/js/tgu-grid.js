@@ -7,7 +7,8 @@ const tgu_grid_WEEK_NAMES = ['S','M','T','W','T','F','S'];
 
 // ===== Grid Functions =====
 
-function tgu_grid_rebuild(container, year, searchTerm) {
+/** @description Reconstructs the calendar grid for a specific year */
+const tgu_grid_rebuild = (container, year, searchTerm) => {
     const fragment = document.createDocumentFragment();
     container.textContent = '';
     const yearDisplay = document.getElementById('current-year-display');
@@ -54,8 +55,9 @@ function tgu_grid_rebuild(container, year, searchTerm) {
         for (let d = 1; d <= dInMonth; d++) {
             const dKey = tgu_utils_formatDateKey(year, m + 1, d);
             const dObj = new Date(year, m, d);
-            const entry = tgu_store_getEntry(dKey);
-            const sKey = tgu_utils_getStorageKey(year, m + 1, d);
+            const txt = tgu_store_get(dKey, tgu_store_TYPE.TXT);
+            const dotColor = tgu_store_get(dKey, tgu_store_TYPE.COL);
+            
             const el = document.createElement('div');
             const col = fOffset + d;
             
@@ -65,7 +67,7 @@ function tgu_grid_rebuild(container, year, searchTerm) {
             el.dataset.r = row;
             el.dataset.c = col;
             el.tabIndex = 0;
-            el.dataset.k = sKey;
+            el.dataset.k = dKey; // Store raw date as primary key
             el.dataset.date = dKey;
             
             const span = document.createElement('span');
@@ -77,30 +79,29 @@ function tgu_grid_rebuild(container, year, searchTerm) {
             
             if (dObj.getDay() === 0) el.classList.add('sun');
             el.classList.add((dObj > todayStart) ? 'tgu-future' : 'tgu-past');
-            if (entry.text) el.classList.add('hc');
-            if (searchTerm && entry.text.toLowerCase().includes(searchTerm)) el.classList.add('sm');
+            if (txt) el.classList.add('hc');
+            if (searchTerm && txt.toLowerCase().includes(searchTerm)) el.classList.add('sm');
             if (dKey === todayDateKey) el.classList.add('tdy');
-            if (entry.color) el.style.setProperty('--dot', entry.color);
+            if (dotColor) el.style.setProperty('--dot', dotColor);
             
             fragment.appendChild(el);
         }
     }
     
     container.appendChild(fragment);
-}
+};
 
-function tgu_grid_createHeader(options) {
-    const {
-        text,
-        rowStart,
-        rowEnd,
-        colStart,
-        colEnd,
-        isSpecial = false,
-        target = null,
-        className = 'tgu-header'
-    } = options;
-    
+/** @description Creates a month label or header element for the grid */
+const tgu_grid_createHeader = ({
+    text,
+    rowStart,
+    rowEnd,
+    colStart,
+    colEnd,
+    isSpecial = false,
+    target = null,
+    className = 'tgu-header'
+}) => {
     const container = target || document.getElementById('app') || document.body;
     const h = document.createElement('div');
     h.className = className;

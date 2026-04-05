@@ -5,11 +5,8 @@ const tgu_utils_WHITE_THRESHOLD = 250;
 // ===== Date Utilities =====
 
 function tgu_utils_parseKeyDate(key) {
-    const cleanKey = key.replace(
-        new RegExp(`^${tgu_store_PREFIX.SET}[^:]+${tgu_store_PREFIX.SEP}`), 
-        ''
-    );
-    const dateStr = cleanKey.substring(2); // Remove 'D_' prefix
+    // Key is DATE:TYPE:SET. We only need the DATE part.
+    const dateStr = key.split(':')[0];
     const [y, m, d] = dateStr.split('-').map(Number);
     return new Date(y, m - 1, d);
 }
@@ -18,19 +15,8 @@ function tgu_utils_formatDateKey(year, month, day) {
     return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
-function tgu_utils_getStorageKey(year, month, day, currentSet = null) {
-    const dateKey = tgu_utils_formatDateKey(year, month, day);
-    const setPrefix = (currentSet || tgu_store_getCurrentSet()) === tgu_main_DEFAULT_SET 
-        ? '' 
-        : `${tgu_store_PREFIX.SET}${currentSet}${tgu_store_PREFIX.SEP}`;
-    return `${setPrefix}${tgu_store_PREFIX.CONTENT}${dateKey}`;
-}
-
 function tgu_utils_getSetDataKeys() {
-    return tgu_store_getExistingDateKeys().map(dateKey => {
-        const [y, m, d] = dateKey.split('-').map(Number);
-        return tgu_utils_getStorageKey(y, m, d);
-    });
+    return tgu_store_getExistingDateKeys();
 }
 
 // ===== Color Utilities =====

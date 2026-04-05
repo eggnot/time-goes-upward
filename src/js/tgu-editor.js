@@ -14,9 +14,8 @@ function tgu_editor_populateData(dateObj, key) {
     if (!el.textArea || !el.colorPicker || !el.dateLabel) return;
     
     const dateKey = tgu_utils_formatDateKey(dateObj.getFullYear(), dateObj.getMonth() + 1, dateObj.getDate());
-    const entry = tgu_store_getEntry(dateKey);
-    el.textArea.value = entry.text;
-    el.colorPicker.value = entry.color || "#ffffff";
+    el.textArea.value = tgu_store_get(dateKey, tgu_store_TYPE.TXT);
+    el.colorPicker.value = tgu_store_get(dateKey, tgu_store_TYPE.COL) || "#ffffff";
     
     const fullDate = dateObj.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     const shortDate = dateObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
@@ -79,7 +78,8 @@ function tgu_editor_saveCurrentEntry() {
     if (!textArea || !colorPicker) return;
     if (!window.editKey) return;
     const dateKey = tgu_utils_formatDateKey(window.editDate.getFullYear(), window.editDate.getMonth() + 1, window.editDate.getDate());
-    tgu_store_saveEntry(dateKey, { text: textArea.value.trim(), color: colorPicker.value });
+    tgu_store_set(dateKey, tgu_store_TYPE.TXT, textArea.value);
+    tgu_store_set(dateKey, tgu_store_TYPE.COL, colorPicker.value);
 }
 
 function tgu_editor_closeEditor(goBack = true) {

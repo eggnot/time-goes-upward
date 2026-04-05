@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tgu-v36';
+const CACHE_NAME = 'tgu-v37';
 
 const ASSETS = [
   './',
